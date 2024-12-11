@@ -1,7 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { Button } from "@/components/ui/button";
-import { KennedyPreviewSystem } from "@/components/KennedyPreviewSystem";
+import KennedyPreviewSystem from "@/components/KennedyPreviewSystem";
 
 const Index = () => {
   const featuredArtworks = [
