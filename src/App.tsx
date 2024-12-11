@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import Submit from "./pages/Submit";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
+import Login from "./pages/Login";
+import Explore from "./pages/Explore";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ const App = () => (
           <Route path="/submit" element={<Submit />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/about" element={<About />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/explore" element={<Explore />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
