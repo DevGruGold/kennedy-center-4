@@ -1,6 +1,7 @@
 import { Navigation } from "@/components/Navigation";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { Button } from "@/components/ui/button";
+import { KennedyPreviewSystem } from "@/components/KennedyPreviewSystem";
 
 const Index = () => {
   const featuredArtworks = [
@@ -54,6 +55,10 @@ const Index = () => {
               Learn More
             </Button>
           </div>
+        </section>
+
+        <section className="mb-16">
+          <KennedyPreviewSystem />
         </section>
 
         <section className="mb-16">
