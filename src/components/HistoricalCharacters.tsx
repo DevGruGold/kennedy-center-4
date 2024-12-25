@@ -37,6 +37,7 @@ export const HistoricalCharacters = () => {
 
     try {
       const response = await generateResponse(character.prompt);
+      console.log("Received AI response:", response);
       setGeneratedText(response);
       
       const utterance = new SpeechSynthesisUtterance(response);
@@ -99,7 +100,7 @@ export const HistoricalCharacters = () => {
           Experience an AI-powered simulation of President Kennedy discussing his vision for the arts and culture in America.
         </p>
         <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-          Powered by Google's Gemini 1.5 Pro AI model
+          Powered by Google's Gemini Pro AI model
         </p>
       </div>
       

@@ -23,7 +23,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       throw new Error('Gemini API key not found');
     }
 
-    console.log('Sending request to Gemini API...');
+    console.log('Sending request to Gemini API with prompt:', prompt);
     
     const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
       method: 'POST',
@@ -42,25 +42,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
           topP: 1,
           topK: 40,
           maxOutputTokens: 800,
-        },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
+        }
       }),
     });
 
