@@ -1,172 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
+import { generateWithGemini } from './textGeneration/geminiService';
+import { generateWithOpenAI } from './textGeneration/openaiService';
+import { generateWithBlenderBot, preloadBlenderBot } from './textGeneration/blenderBotService';
 
-let blenderBotModel: any = null;
+export { preloadBlenderBot };
 
-export const preloadBlenderBot = async () => {
-  if (blenderBotModel) return;
-  
-  try {
-    console.log('Initializing BlenderBot model...');
-    
-    const { data: secretData, error: secretError } = await supabase
-      .from('secrets')
-      .select('key_value')
-      .eq('key_name', 'HUGGING_FACE_ACCESS_TOKEN')
-      .maybeSingle();
-      
-    if (secretError) {
-      console.error('Failed to retrieve Hugging Face token:', secretError);
-      return;
-    }
-
-    if (!secretData) {
-      console.error('Hugging Face token not found in secrets');
-      return;
-    }
-
-    const pipeline = (await import('@huggingface/transformers')).pipeline;
-    
-    blenderBotModel = await pipeline(
-      "text2text-generation",
-      "Xenova/blenderbot-400M-new",
-      { revision: "main" }
-    );
-    console.log('BlenderBot model loaded successfully');
-  } catch (error) {
-    console.error('Error loading BlenderBot:', error);
-    blenderBotModel = null;
-  }
-};
-
-const generateWithGemini = async (prompt: string) => {
-  try {
-    const { data: secretData } = await supabase
-      .from('secrets')
-      .select('key_value')
-      .eq('key_name', 'GEMINI_API_KEY')
-      .maybeSingle();
-
-    if (!secretData) {
-      throw new Error('Gemini API key not found');
-    }
-
-    // Special handling for JFK character
-    if (prompt.toLowerCase().includes('john f. kennedy') || prompt.toLowerCase().includes('jfk')) {
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-goog-api-key': secretData.key_value,
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }],
-          generationConfig: {
-            temperature: 1,
-            topP: 0.95,
-            topK: 40,
-            maxOutputTokens: 8192,
-          },
-          safetySettings: [
-            {
-              category: "HARM_CATEGORY_HARASSMENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_HATE_SPEECH",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE"
-            }
-          ]
-        }),
-      });
-
-      const data = await response.json();
-      return data.candidates[0].content.parts[0].text;
-    }
-
-    // Default Gemini behavior for other characters
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': secretData.key_value,
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `You are ${prompt}. Please respond in first person, as if you are actually this historical figure. Keep the response concise and natural, suitable for text-to-speech.`
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 150,
-        },
-      }),
-    });
-
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
-  } catch (error) {
-    console.error('Gemini generation error:', error);
-    throw error;
-  }
-};
-
-const generateWithOpenAI = async (prompt: string) => {
-  try {
-    const { data: secretData } = await supabase
-      .from('secrets')
-      .select('key_value')
-      .eq('key_name', 'OPENAI_API_KEY')
-      .maybeSingle();
-
-    if (!secretData) {
-      throw new Error('OpenAI API key not found');
-    }
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${secretData.key_value}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a historical figure simulation. Respond in character based on the provided context.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
-        ],
-        max_tokens: 150,
-        temperature: 0.7,
-      }),
-    });
-
-    const data = await response.json();
-    return data.choices[0].message.content;
-  } catch (error) {
-    console.error('OpenAI generation error:', error);
-    throw error;
-  }
-};
-
-export const generateResponse = async (prompt: string) => {
+export const generateResponse = async (prompt: string): Promise<string> => {
   // Try Gemini first as it's more reliable for this use case
   try {
     return await generateWithGemini(prompt);
@@ -181,24 +19,10 @@ export const generateResponse = async (prompt: string) => {
     }
     
     // Try BlenderBot as last resort
-    if (blenderBotModel) {
-      try {
-        const output = await blenderBotModel(prompt, {
-          max_length: 150,
-          num_return_sequences: 1,
-          temperature: 0.7,
-          top_p: 0.9,
-          do_sample: true
-        });
-        
-        if (Array.isArray(output)) {
-          const firstOutput = output[0];
-          return String(firstOutput.generated_text || "").trim();
-        }
-        return String(output.generated_text || "").trim();
-      } catch (error) {
-        console.error("BlenderBot error:", error);
-      }
+    try {
+      return await generateWithBlenderBot(prompt);
+    } catch (error) {
+      console.error("BlenderBot error:", error);
     }
 
     // If all attempts fail, return a graceful error message
