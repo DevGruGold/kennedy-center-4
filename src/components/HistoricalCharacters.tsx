@@ -8,21 +8,21 @@ const characters: Character[] = [
   {
     name: "Leonard Bernstein",
     role: "Conductor & Composer",
-    imageUrl: "/placeholder.svg",
+    imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
     description: "Legendary conductor who brought classical music to television audiences.",
     prompt: "As Leonard Bernstein, discuss the importance of making classical music accessible to all audiences through television and education."
   },
   {
     name: "Marian Anderson",
     role: "Opera Singer",
-    imageUrl: "/placeholder.svg",
+    imageUrl: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
     description: "Groundbreaking contralto who broke racial barriers in classical music.",
     prompt: "As Marian Anderson, share your experience performing at the Lincoln Memorial in 1939 and breaking racial barriers in classical music."
   },
   {
     name: "John F. Kennedy",
     role: "35th U.S. President",
-    imageUrl: "/placeholder.svg",
+    imageUrl: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
     description: "The president who championed the arts and inspired the Center's creation.",
     prompt: "As President Kennedy, explain your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution."
   }
