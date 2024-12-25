@@ -16,10 +16,10 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
 
   if (Array.isArray(output)) {
     const firstOutput = output[0] as TextGenerationSingle;
-    return firstOutput.generated_text;
+    return firstOutput.generated_text || "No response generated";
   }
   
-  return (output as TextGenerationSingle).generated_text;
+  return ((output as TextGenerationSingle).generated_text) || "No response generated";
 };
 
 const generateOpenAIResponse = async (prompt: string): Promise<string> => {
@@ -27,7 +27,7 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
       model: "gpt-4",
@@ -49,7 +49,7 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Token ${import.meta.env.VITE_REPLICATE_API_KEY}`,
+      'Authorization': `Token ${process.env.REPLICATE_API_KEY}`,
     },
     body: JSON.stringify({
       version: "2b017567119ce1987cf8345b86545589227154c93d02f351598f471b7791f1df",
@@ -65,7 +65,7 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
   }
 
   const data = await response.json();
-  return data.output;
+  return data.output || "No response generated";
 };
 
 export const generateResponse = async (prompt: string): Promise<string> => {
