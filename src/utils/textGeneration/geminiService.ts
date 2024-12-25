@@ -22,7 +22,8 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       throw new Error('Gemini API key not found');
     }
 
-    // Using the Gemini 1.5 Pro model with specific configuration for JFK responses
+    console.log('Sending request to Gemini API...');
+    
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent', {
       method: 'POST',
       headers: {
@@ -32,14 +33,14 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       body: JSON.stringify({
         contents: [{
           parts: [{
-            text: prompt
+            text: `You are President John F. Kennedy. Respond in first person as JFK, maintaining his characteristic speaking style and mannerisms. Focus on your passion for the arts and cultural advancement. Here is what you should respond to: ${prompt}`
           }]
         }],
         generationConfig: {
-          temperature: 1,
-          topP: 0.95,
+          temperature: 0.9,
+          topP: 0.8,
           topK: 40,
-          maxOutputTokens: 8192,
+          maxOutputTokens: 1024,
         },
         safetySettings: [
           {
@@ -62,7 +63,18 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       }),
     });
 
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Gemini API error:', errorData);
+      throw new Error(`Gemini API error: ${response.status}`);
+    }
+
     const data: GeminiResponse = await response.json();
+    
+    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      throw new Error('Invalid response format from Gemini API');
+    }
+
     return data.candidates[0].content.parts[0].text;
   } catch (error) {
     console.error('Gemini generation error:', error);

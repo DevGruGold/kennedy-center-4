@@ -2,9 +2,12 @@ import { generateWithGemini } from './textGeneration/geminiService';
 
 export const generateResponse = async (prompt: string): Promise<string> => {
   try {
-    return await generateWithGemini(prompt);
+    console.log('Generating response for prompt:', prompt);
+    const response = await generateWithGemini(prompt);
+    console.log('Generated response:', response);
+    return response;
   } catch (error) {
     console.error("AI generation error:", error);
-    return "I apologize, but I'm having trouble accessing my knowledge at the moment. Please try again later.";
+    throw error;
   }
 };

@@ -9,7 +9,7 @@ const character: Character = {
   role: "35th U.S. President",
   imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
   description: "Experience an AI simulation of President Kennedy discussing his vision for the arts and the Kennedy Center.",
-  prompt: "You are President John F. Kennedy. Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Keep your response natural and conversational, focusing on your passion for cultural advancement."
+  prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Keep your response natural and conversational, focusing on your passion for cultural advancement."
 };
 
 export const HistoricalCharacters = () => {
@@ -27,6 +27,7 @@ export const HistoricalCharacters = () => {
 
   const handlePlay = async () => {
     setIsPlaying(true);
+    setGeneratedText("");
     
     toast({
       title: "Starting Simulation",
@@ -110,7 +111,7 @@ export const HistoricalCharacters = () => {
           isActive={true}
           isPlaying={isPlaying}
           generatedText={generatedText}
-          onPlay={() => handlePlay()}
+          onPlay={handlePlay}
           onPause={handlePause}
           onReset={handleReset}
         />
