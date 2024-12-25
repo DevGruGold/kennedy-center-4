@@ -18,10 +18,14 @@ export const preloadBlenderBot = async () => {
       .from('secrets')
       .select('key_value')
       .eq('key_name', 'HUGGING_FACE_ACCESS_TOKEN')
-      .single();
+      .maybeSingle();
       
-    if (secretError || !secretData) {
+    if (secretError) {
       throw new Error('Failed to retrieve Hugging Face token');
+    }
+
+    if (!secretData) {
+      throw new Error('Hugging Face token not found in secrets');
     }
 
     // Initialize the pipeline with authentication
@@ -30,7 +34,7 @@ export const preloadBlenderBot = async () => {
       "Xenova/blenderbot-400M-new",
       { 
         revision: "main",
-        auth_token: secretData.key_value
+        accessToken: secretData.key_value
       }
     );
     console.log('BlenderBot model loaded successfully');
