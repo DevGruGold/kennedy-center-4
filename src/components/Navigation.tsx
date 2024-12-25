@@ -32,7 +32,7 @@ export const Navigation = () => {
             onClick={() => navigate("/")}
             className="font-heading text-2xl font-bold text-primary cursor-pointer"
           >
-            Kennedy Center Digital Art
+            Smithsonian Museums
           </h1>
         </div>
         <div className="flex items-center space-x-4">
