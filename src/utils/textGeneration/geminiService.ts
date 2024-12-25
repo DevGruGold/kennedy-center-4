@@ -12,17 +12,24 @@ interface GeminiResponse {
 
 export const generateWithGemini = async (prompt: string): Promise<string> => {
   try {
-    const { data: secretData } = await supabase
+    console.log('Fetching Gemini API key from Supabase secrets...');
+    const { data: secretData, error: secretError } = await supabase
       .from('secrets')
       .select('key_value')
       .eq('key_name', 'GEMINI_API_KEY')
       .maybeSingle();
+
+    if (secretError) {
+      console.error('Error fetching Gemini API key:', secretError);
+      throw new Error('Failed to fetch Gemini API key');
+    }
 
     if (!secretData?.key_value) {
       console.error('Gemini API key not found in secrets');
       throw new Error('Gemini API key not found');
     }
 
+    console.log('Successfully retrieved Gemini API key');
     console.log('Sending request to Gemini API with prompt:', prompt);
     
     const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
@@ -60,7 +67,9 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       throw new Error('Invalid response format from Gemini API');
     }
 
-    return data.candidates[0].content.parts[0].text;
+    const generatedText = data.candidates[0].content.parts[0].text;
+    console.log('Successfully generated text:', generatedText);
+    return generatedText;
   } catch (error) {
     console.error('Gemini generation error:', error);
     throw error;

@@ -18,6 +18,7 @@ export const HistoricalCharacters = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    console.log("Component mounted");
     toast({
       title: "AI Model Ready",
       description: "The JFK simulation model is ready for interaction.",
@@ -26,6 +27,7 @@ export const HistoricalCharacters = () => {
   }, [toast]);
 
   const handlePlay = async () => {
+    console.log("Play button clicked");
     setIsPlaying(true);
     setGeneratedText("");
     
@@ -36,8 +38,14 @@ export const HistoricalCharacters = () => {
     });
 
     try {
+      console.log("Attempting to generate response...");
       const response = await generateResponse(character.prompt);
       console.log("Received AI response:", response);
+      
+      if (!response) {
+        throw new Error("No response received from AI");
+      }
+
       setGeneratedText(response);
       
       const utterance = new SpeechSynthesisUtterance(response);
@@ -45,24 +53,28 @@ export const HistoricalCharacters = () => {
       utterance.pitch = 1;
       
       const voices = window.speechSynthesis.getVoices();
+      console.log("Available voices:", voices);
+      
       if (voices.length > 0) {
         const preferredVoice = voices.find(v => 
           v.name.includes("Male") && v.name.includes("US")
         ) || voices[0];
         utterance.voice = preferredVoice;
+        console.log("Selected voice:", preferredVoice);
       }
       
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
       
       utterance.onend = () => {
+        console.log("Speech synthesis completed");
         setIsPlaying(false);
       };
     } catch (error) {
       console.error("Error in simulation:", error);
       toast({
         title: "Simulation Error",
-        description: "There was an error generating the response. Please try again.",
+        description: `Error: ${error.message}. Please try again.`,
         variant: "destructive",
       });
       setIsPlaying(false);
