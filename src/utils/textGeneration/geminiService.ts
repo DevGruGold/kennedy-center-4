@@ -18,11 +18,12 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       .eq('key_name', 'GEMINI_API_KEY')
       .maybeSingle();
 
-    if (!secretData) {
+    if (!secretData?.key_value) {
+      console.error('Gemini API key not found in secrets');
       throw new Error('Gemini API key not found');
     }
 
-    console.log('Sending request to Gemini API...');
+    console.log('Found Gemini API key, sending request...');
     
     const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent', {
       method: 'POST',
@@ -37,7 +38,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
           }]
         }],
         generationConfig: {
-          temperature: 0.9,
+          temperature: 0.7,
           topP: 0.8,
           topK: 40,
           maxOutputTokens: 1024,
@@ -64,14 +65,16 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
     });
 
     if (!response.ok) {
-      const errorData = await response.text();
-      console.error('Gemini API error:', errorData);
-      throw new Error(`Gemini API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Gemini API error response:', errorText);
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
 
     const data: GeminiResponse = await response.json();
+    console.log('Gemini API response:', data);
     
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      console.error('Invalid Gemini API response format:', data);
       throw new Error('Invalid response format from Gemini API');
     }
 

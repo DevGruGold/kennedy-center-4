@@ -45,7 +45,6 @@ export const HistoricalCharacters = () => {
       
       const voices = window.speechSynthesis.getVoices();
       if (voices.length > 0) {
-        // Try to find a voice that matches JFK's characteristics
         const preferredVoice = voices.find(v => 
           v.name.includes("Male") && v.name.includes("US")
         ) || voices[0];
