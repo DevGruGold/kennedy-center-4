@@ -4,6 +4,9 @@ export const generateResponse = async (prompt: string): Promise<string> => {
   try {
     console.log('Starting response generation for prompt:', prompt);
     const response = await generateWithGemini(prompt);
+    if (!response) {
+      throw new Error('No response received from Gemini API');
+    }
     console.log('Successfully generated response:', response);
     return response;
   } catch (error) {

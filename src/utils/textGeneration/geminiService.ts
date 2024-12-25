@@ -17,7 +17,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       .from('secrets')
       .select('key_value')
       .eq('key_name', 'GEMINI_API_KEY')
-      .maybeSingle();
+      .single();
 
     if (secretError) {
       console.error('Error fetching Gemini API key:', secretError);
@@ -29,29 +29,35 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       throw new Error('Gemini API key not found');
     }
 
+    const apiKey = secretData.key_value;
     console.log('Successfully retrieved Gemini API key');
+
+    const requestBody = {
+      contents: [{
+        parts: [{
+          text: `You are President John F. Kennedy. Respond in first person as JFK, maintaining his characteristic speaking style and mannerisms. Focus on your passion for the arts and cultural advancement. Here is what you should respond to: ${prompt}`
+        }]
+      }],
+      generationConfig: {
+        temperature: 0.9,
+        topP: 1,
+        topK: 40,
+        maxOutputTokens: 800,
+      }
+    };
+
     console.log('Sending request to Gemini API with prompt:', prompt);
     
-    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': secretData.key_value,
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: `You are President John F. Kennedy. Respond in first person as JFK, maintaining his characteristic speaking style and mannerisms. Focus on your passion for the arts and cultural advancement. Here is what you should respond to: ${prompt}`
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.9,
-          topP: 1,
-          topK: 40,
-          maxOutputTokens: 800,
-        }
-      }),
-    });
+    const response = await fetch(
+      'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
