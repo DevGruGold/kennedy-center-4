@@ -7,7 +7,7 @@ interface GenerationOutput {
 const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
   const generator = await pipeline(
     "text-generation",
-    "Xenova/gpt2",  // Using a reliable model that's available for browsers
+    "microsoft/phi-2",  // Using a more reliable model that's available for browsers
     { 
       device: "webgpu"
     }
