@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { CharacterCard } from "./CharacterCard";
-import { generateResponse, preloadBlenderBot } from "@/utils/textGeneration";
+import { generateResponse } from "@/utils/textGeneration";
 import { Character } from "@/types/historical";
 
 const characters: Character[] = [
@@ -32,32 +32,17 @@ export const HistoricalCharacters = () => {
   const [activeCharacter, setActiveCharacter] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [generatedText, setGeneratedText] = useState<string>("");
-  const [isModelReady, setIsModelReady] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    const initializeModel = async () => {
-      setIsModelReady(true);
-      toast({
-        title: "AI Model Ready",
-        description: "The conversation model is now ready for interaction.",
-        variant: "default",
-      });
-    };
-
-    initializeModel();
+    toast({
+      title: "AI Model Ready",
+      description: "The conversation model is now ready for interaction.",
+      variant: "default",
+    });
   }, [toast]);
 
   const handlePlay = async (index: number) => {
-    if (!isModelReady) {
-      toast({
-        title: "Please Wait",
-        description: "The AI model is still loading. Please try again in a moment.",
-        variant: "default",
-      });
-      return;
-    }
-
     setActiveCharacter(index);
     setIsPlaying(true);
     
