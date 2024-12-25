@@ -8,21 +8,21 @@ const characters: Character[] = [
   {
     name: "Leonard Bernstein",
     role: "Conductor & Composer",
-    imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Leonard_Bernstein_by_Jack_Mitchell.jpg/800px-Leonard_Bernstein_by_Jack_Mitchell.jpg",
     description: "Legendary conductor who brought classical music to television audiences.",
     prompt: "As Leonard Bernstein, discuss the importance of making classical music accessible to all audiences through television and education."
   },
   {
     name: "Marian Anderson",
     role: "Opera Singer",
-    imageUrl: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Marian_Anderson_1940.jpg/800px-Marian_Anderson_1940.jpg",
     description: "Groundbreaking contralto who broke racial barriers in classical music.",
     prompt: "As Marian Anderson, share your experience performing at the Lincoln Memorial in 1939 and breaking racial barriers in classical music."
   },
   {
     name: "John F. Kennedy",
     role: "35th U.S. President",
-    imageUrl: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
     description: "The president who championed the arts and inspired the Center's creation.",
     prompt: "As President Kennedy, explain your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution."
   }
