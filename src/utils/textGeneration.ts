@@ -38,7 +38,7 @@ export const preloadBlenderBot = async () => {
   }
 };
 
-const generateWithOpenAI = async (prompt: string): Promise<string> {
+const generateWithOpenAI = async (prompt: string) => {
   try {
     const { data: secretData } = await supabase
       .from('secrets')
@@ -81,7 +81,7 @@ const generateWithOpenAI = async (prompt: string): Promise<string> {
   }
 };
 
-const generateWithGemini = async (prompt: string): Promise<string> {
+const generateWithGemini = async (prompt: string) => {
   try {
     const { data: secretData } = await supabase
       .from('secrets')
