@@ -23,9 +23,9 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       throw new Error('Gemini API key not found');
     }
 
-    console.log('Found Gemini API key, sending request...');
+    console.log('Sending request to Gemini API...');
     
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent', {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,10 +38,10 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
           }]
         }],
         generationConfig: {
-          temperature: 0.7,
-          topP: 0.8,
+          temperature: 0.9,
+          topP: 1,
           topK: 40,
-          maxOutputTokens: 1024,
+          maxOutputTokens: 800,
         },
         safetySettings: [
           {
