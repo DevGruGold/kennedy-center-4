@@ -12,9 +12,9 @@ interface GeminiResponse {
 
 export const generateWithGemini = async (prompt: string): Promise<string> => {
   try {
+    console.log('Starting Gemini API request process...');
     console.log('Fetching Gemini API key from Supabase secrets...');
     
-    // Use maybeSingle() instead of single() to avoid 406 errors
     const { data: secretData, error: secretError } = await supabase
       .from('secrets')
       .select('key_value')
@@ -33,6 +33,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
 
     const apiKey = secretData.key_value;
     console.log('Successfully retrieved Gemini API key');
+    console.log('Preparing request to Gemini API...');
 
     const requestBody = {
       contents: [{
@@ -48,7 +49,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       }
     };
 
-    console.log('Sending request to Gemini API with prompt:', prompt);
+    console.log('Sending request to Gemini API...');
     
     const response = await fetch(
       'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
@@ -68,7 +69,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
     }
 
     const data: GeminiResponse = await response.json();
-    console.log('Gemini API response:', data);
+    console.log('Received response from Gemini API:', data);
     
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
       console.error('Invalid Gemini API response format:', data);
@@ -79,7 +80,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
     console.log('Successfully generated text:', generatedText);
     return generatedText;
   } catch (error) {
-    console.error('Gemini generation error:', error);
+    console.error('Error in Gemini generation:', error);
     throw error;
   }
 };
