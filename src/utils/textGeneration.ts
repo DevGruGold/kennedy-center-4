@@ -6,11 +6,24 @@ interface GenerationOutput {
 }
 
 const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
+  const { data: hfToken, error: hfError } = await supabase
+    .from('secrets')
+    .select('key_value')
+    .eq('key_name', 'HUGGING_FACE_ACCESS_TOKEN')
+    .single();
+
+  if (hfError || !hfToken?.key_value) {
+    throw new Error('Hugging Face token not found');
+  }
+
+  // Use a public model that's known to work in the browser
   const generator = await pipeline(
     "text-generation",
-    "Xenova/tiny-random-gpt2",  // Using a smaller, browser-compatible model
+    "gpt2",
     { 
-      device: "webgpu"
+      credentials: {
+        accessToken: hfToken.key_value
+      }
     }
   );
 
