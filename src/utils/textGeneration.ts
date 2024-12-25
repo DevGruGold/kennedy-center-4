@@ -1,4 +1,5 @@
 import { pipeline } from "@huggingface/transformers";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GenerationOutput {
   generated_text: string;
@@ -27,11 +28,20 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
 };
 
 const generateOpenAIResponse = async (prompt: string): Promise<string> => {
+  const { data: { OPENAI_API_KEY }, error } = await supabase
+    .from('secrets')
+    .select('OPENAI_API_KEY')
+    .single();
+
+  if (error || !OPENAI_API_KEY) {
+    throw new Error('OpenAI API key not found');
+  }
+
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
       model: "gpt-4",
@@ -49,11 +59,20 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
 };
 
 const generateReplicateResponse = async (prompt: string): Promise<string> => {
+  const { data: { REPLICATE_API_KEY }, error } = await supabase
+    .from('secrets')
+    .select('REPLICATE_API_KEY')
+    .single();
+
+  if (error || !REPLICATE_API_KEY) {
+    throw new Error('Replicate API key not found');
+  }
+
   const response = await fetch('https://api.replicate.com/v1/predictions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Token ${import.meta.env.VITE_REPLICATE_API_KEY}`,
+      'Authorization': `Token ${REPLICATE_API_KEY}`,
     },
     body: JSON.stringify({
       version: "2b017567119ce1987cf8345b86545589227154c93d02f351598f471b7791f1df",
