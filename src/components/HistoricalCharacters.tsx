@@ -4,32 +4,15 @@ import { CharacterCard } from "./CharacterCard";
 import { generateResponse } from "@/utils/textGeneration";
 import { Character } from "@/types/historical";
 
-const characters: Character[] = [
-  {
-    name: "Leonard Bernstein",
-    role: "Conductor & Composer",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Leonard_Bernstein_by_Jack_Mitchell.jpg/800px-Leonard_Bernstein_by_Jack_Mitchell.jpg",
-    description: "Legendary conductor who brought classical music to television audiences.",
-    prompt: "Leonard Bernstein, discussing the importance of making classical music accessible to all audiences through television and education"
-  },
-  {
-    name: "Marian Anderson",
-    role: "Opera Singer",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Marian_Anderson_1940.jpg/800px-Marian_Anderson_1940.jpg",
-    description: "Groundbreaking contralto who broke racial barriers in classical music.",
-    prompt: "Marian Anderson, sharing your experience performing at the Lincoln Memorial in 1939 and breaking racial barriers in classical music"
-  },
-  {
-    name: "John F. Kennedy",
-    role: "35th U.S. President",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
-    description: "The president who championed the arts and inspired the Center's creation.",
-    prompt: "President John F. Kennedy, explaining your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution"
-  }
-];
+const character: Character = {
+  name: "John F. Kennedy",
+  role: "35th U.S. President",
+  imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
+  description: "Experience an AI simulation of President Kennedy discussing his vision for the arts and the Kennedy Center.",
+  prompt: "You are President John F. Kennedy. Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Keep your response natural and conversational, focusing on your passion for cultural advancement."
+};
 
 export const HistoricalCharacters = () => {
-  const [activeCharacter, setActiveCharacter] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [generatedText, setGeneratedText] = useState<string>("");
   const { toast } = useToast();
@@ -37,45 +20,38 @@ export const HistoricalCharacters = () => {
   useEffect(() => {
     toast({
       title: "AI Model Ready",
-      description: "The conversation model is now ready for interaction.",
+      description: "The JFK simulation model is ready for interaction.",
       variant: "default",
     });
   }, [toast]);
 
-  const handlePlay = async (index: number) => {
-    setActiveCharacter(index);
+  const handlePlay = async () => {
     setIsPlaying(true);
     
     toast({
       title: "Starting Simulation",
-      description: "Generating AI response. Please wait...",
+      description: "Generating President Kennedy's response. Please wait...",
       variant: "default",
     });
 
     try {
-      const response = await generateResponse(characters[index].prompt);
+      const response = await generateResponse(character.prompt);
       setGeneratedText(response);
       
-      // Configure voice synthesis
       const utterance = new SpeechSynthesisUtterance(response);
-      utterance.rate = 0.9; // Slightly slower for better clarity
+      utterance.rate = 0.9;
       utterance.pitch = 1;
       
-      // Get available voices and select an appropriate one
       const voices = window.speechSynthesis.getVoices();
       if (voices.length > 0) {
-        // Try to find a good voice match for each character
-        const preferredVoices = {
-          "Leonard Bernstein": voices.find(v => v.name.includes("Male") || v.name.includes("US English")),
-          "Marian Anderson": voices.find(v => v.name.includes("Female") || v.name.includes("US English")),
-          "John F. Kennedy": voices.find(v => v.name.includes("Male") || v.name.includes("US English"))
-        };
-        
-        utterance.voice = preferredVoices[characters[index].name] || voices[0];
+        // Try to find a voice that matches JFK's characteristics
+        const preferredVoice = voices.find(v => 
+          v.name.includes("Male") && v.name.includes("US")
+        ) || voices[0];
+        utterance.voice = preferredVoice;
       }
       
-      // Start speaking
-      window.speechSynthesis.cancel(); // Clear any previous speech
+      window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
       
       utterance.onend = () => {
@@ -97,19 +73,18 @@ export const HistoricalCharacters = () => {
     window.speechSynthesis.pause();
     toast({
       title: "Simulation Paused",
-      description: "The AI animation demonstration has been paused.",
+      description: "The AI simulation has been paused.",
       variant: "default",
     });
   };
 
   const handleReset = () => {
     setIsPlaying(false);
-    setActiveCharacter(null);
     setGeneratedText("");
     window.speechSynthesis.cancel();
     toast({
       title: "Simulation Reset",
-      description: "The AI animation demonstration has been reset.",
+      description: "The AI simulation has been reset.",
       variant: "default",
     });
   };
@@ -117,31 +92,28 @@ export const HistoricalCharacters = () => {
   return (
     <div className="py-8">
       <h2 className="text-3xl font-bold text-primary text-center mb-4">
-        Historical Figure Simulations
+        Meet President Kennedy
       </h2>
       <div className="text-center mb-8">
         <p className="text-gray-600 mb-2 max-w-2xl mx-auto">
-          Experience AI-powered simulations demonstrating how historical figures might respond to questions about their legacy.
+          Experience an AI-powered simulation of President Kennedy discussing his vision for the arts and culture in America.
         </p>
         <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-          Note: This is a demonstration using AI technology to simulate historical figures' potential responses.
+          Powered by Google's Gemini 1.5 Pro AI model
         </p>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {characters.map((character, index) => (
-          <CharacterCard
-            key={index}
-            character={character}
-            index={index}
-            isActive={activeCharacter === index}
-            isPlaying={isPlaying}
-            generatedText={activeCharacter === index ? generatedText : ""}
-            onPlay={handlePlay}
-            onPause={handlePause}
-            onReset={handleReset}
-          />
-        ))}
+      <div className="max-w-xl mx-auto">
+        <CharacterCard
+          character={character}
+          index={0}
+          isActive={true}
+          isPlaying={isPlaying}
+          generatedText={generatedText}
+          onPlay={() => handlePlay()}
+          onPause={handlePause}
+          onReset={handleReset}
+        />
       </div>
     </div>
   );
