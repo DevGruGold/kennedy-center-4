@@ -21,7 +21,6 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
     "text-generation",
     "gpt2",
     { 
-      quantized: false,
       revision: "main"
     }
   );
