@@ -10,7 +10,7 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
     .from('secrets')
     .select('key_value')
     .eq('key_name', 'HUGGING_FACE_ACCESS_TOKEN')
-    .single();
+    .maybeSingle();
 
   if (hfError || !hfToken?.key_value) {
     throw new Error('Hugging Face token not found');
@@ -21,7 +21,8 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
     "text-generation",
     "gpt2",
     { 
-      accessToken: hfToken.key_value // Changed from credentials object to direct accessToken
+      quantized: false,
+      revision: "main"
     }
   );
 
@@ -43,7 +44,7 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
     .from('secrets')
     .select('key_value')
     .eq('key_name', 'OPENAI_API_KEY')
-    .single();
+    .maybeSingle();
 
   if (error || !data?.key_value) {
     throw new Error('OpenAI API key not found');
@@ -75,7 +76,7 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
     .from('secrets')
     .select('key_value')
     .eq('key_name', 'REPLICATE_API_KEY')
-    .single();
+    .maybeSingle();
 
   if (error || !data?.key_value) {
     throw new Error('Replicate API key not found');
