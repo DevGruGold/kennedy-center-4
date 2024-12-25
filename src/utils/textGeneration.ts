@@ -1,5 +1,9 @@
 import { pipeline } from "@huggingface/transformers";
 
+interface GenerationOutput {
+  generated_text: string;
+}
+
 const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
   const generator = await pipeline(
     "text-generation",
@@ -15,11 +19,11 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
   });
 
   if (Array.isArray(output)) {
-    const firstOutput = output[0];
+    const firstOutput = output[0] as GenerationOutput;
     return String(firstOutput.generated_text || "No response generated");
   }
   
-  return String(output.generated_text || "No response generated");
+  return String((output as GenerationOutput).generated_text || "No response generated");
 };
 
 const generateOpenAIResponse = async (prompt: string): Promise<string> => {
