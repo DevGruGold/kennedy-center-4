@@ -30,7 +30,38 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4">
+        {/* New Header Section */}
+        <section className="relative py-20 mb-16">
+          <div className="absolute inset-0 overflow-hidden">
+            <img
+              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+              alt="AI Animation Technology"
+              className="w-full h-full object-cover opacity-20"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70" />
+          </div>
+          
+          <div className="relative z-10 max-w-3xl mx-auto text-center">
+            <h1 className="font-heading text-4xl md:text-6xl font-bold text-white mb-6 leading-tight animate-fade-in">
+              Meet Historical Figures Through AI
+            </h1>
+            <p className="text-lg md:text-xl text-white/90 mb-8 animate-fade-in">
+              Experience groundbreaking AI animations powered by Google's Gemini model, bringing Kennedy Center's legendary figures to life.
+            </p>
+            <Button
+              size="lg"
+              className="bg-secondary text-primary hover:bg-secondary/90 animate-fade-in"
+              onClick={() => {
+                const element = document.getElementById('historical-characters');
+                element?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              Meet the Legends
+            </Button>
+          </div>
+        </section>
+
         <section className="text-center mb-16 animate-fadeIn">
           <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4 leading-tight">
             Digital Art Platform
@@ -62,7 +93,7 @@ const Index = () => {
           <KennedyPreviewSystem />
         </section>
 
-        <section className="mb-16">
+        <section id="historical-characters" className="mb-16">
           <HistoricalCharacters />
         </section>
 
