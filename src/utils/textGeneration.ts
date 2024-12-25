@@ -30,9 +30,7 @@ export const preloadBlenderBot = async () => {
       "Xenova/blenderbot-400M-new",
       { 
         revision: "main",
-        credentials: {
-          accessToken: secretData.key_value
-        }
+        accessToken: secretData.key_value
       }
     );
     console.log('BlenderBot model loaded successfully');
