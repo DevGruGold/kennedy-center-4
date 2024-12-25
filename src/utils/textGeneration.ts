@@ -5,8 +5,7 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
     "text-generation",
     "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
     { 
-      device: "webgpu",
-      credentials: 'omit'
+      device: "webgpu"
     }
   );
 
