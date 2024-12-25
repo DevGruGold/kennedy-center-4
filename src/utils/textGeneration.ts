@@ -12,11 +12,27 @@ export const preloadBlenderBot = async () => {
   
   try {
     console.log('Initializing BlenderBot model...');
+    
+    // Get the Hugging Face token from Supabase secrets
+    const { data: secretData, error: secretError } = await supabase
+      .from('secrets')
+      .select('key_value')
+      .eq('key_name', 'HUGGING_FACE_ACCESS_TOKEN')
+      .single();
+      
+    if (secretError || !secretData) {
+      throw new Error('Failed to retrieve Hugging Face token');
+    }
+
+    // Initialize the pipeline with authentication
     blenderBotModel = await pipeline(
       "text2text-generation",
       "Xenova/blenderbot-400M-new",
       { 
         revision: "main",
+        credentials: {
+          accessToken: secretData.key_value
+        }
       }
     );
     console.log('BlenderBot model loaded successfully');
