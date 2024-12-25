@@ -38,6 +38,45 @@ export const preloadBlenderBot = async () => {
   }
 };
 
+const generateWithGemini = async (prompt: string) => {
+  try {
+    const { data: secretData } = await supabase
+      .from('secrets')
+      .select('key_value')
+      .eq('key_name', 'GEMINI_API_KEY')
+      .maybeSingle();
+
+    if (!secretData) {
+      throw new Error('Gemini API key not found');
+    }
+
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': secretData.key_value,
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `You are ${prompt}. Please respond in first person, as if you are actually this historical figure. Keep the response concise and natural, suitable for text-to-speech.`
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 150,
+        },
+      }),
+    });
+
+    const data = await response.json();
+    return data.candidates[0].content.parts[0].text;
+  } catch (error) {
+    console.error('Gemini generation error:', error);
+    throw error;
+  }
+};
+
 const generateWithOpenAI = async (prompt: string) => {
   try {
     const { data: secretData } = await supabase
@@ -81,48 +120,21 @@ const generateWithOpenAI = async (prompt: string) => {
   }
 };
 
-const generateWithGemini = async (prompt: string) => {
-  try {
-    const { data: secretData } = await supabase
-      .from('secrets')
-      .select('key_value')
-      .eq('key_name', 'GEMINI_API_KEY')
-      .maybeSingle();
-
-    if (!secretData) {
-      throw new Error('Gemini API key not found');
-    }
-
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': secretData.key_value,
-      },
-      body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: prompt
-          }]
-        }],
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 150,
-        },
-      }),
-    });
-
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
-  } catch (error) {
-    console.error('Gemini generation error:', error);
-    throw error;
-  }
-};
-
 export const generateResponse = async (prompt: string): Promise<string> => {
+  // Try Gemini first as it's more reliable for this use case
   try {
-    // Try BlenderBot first
+    return await generateWithGemini(prompt);
+  } catch (geminiError) {
+    console.error("Gemini failed:", geminiError);
+    
+    // Try OpenAI as first fallback
+    try {
+      return await generateWithOpenAI(prompt);
+    } catch (openAIError) {
+      console.error("OpenAI fallback failed:", openAIError);
+    }
+    
+    // Try BlenderBot as last resort
     if (blenderBotModel) {
       try {
         const output = await blenderBotModel(prompt, {
@@ -143,24 +155,7 @@ export const generateResponse = async (prompt: string): Promise<string> => {
       }
     }
 
-    // Try OpenAI as first fallback
-    try {
-      return await generateWithOpenAI(prompt);
-    } catch (openAIError) {
-      console.error("OpenAI fallback failed:", openAIError);
-    }
-
-    // Try Gemini as second fallback
-    try {
-      return await generateWithGemini(prompt);
-    } catch (geminiError) {
-      console.error("Gemini fallback failed:", geminiError);
-    }
-
     // If all attempts fail, return a graceful error message
-    return "I apologize, but I'm having trouble accessing my knowledge at the moment. Please try again later.";
-  } catch (error) {
-    console.error("All generation attempts failed:", error);
     return "I apologize, but I'm having trouble accessing my knowledge at the moment. Please try again later.";
   }
 };

@@ -10,21 +10,21 @@ const characters: Character[] = [
     role: "Conductor & Composer",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Leonard_Bernstein_by_Jack_Mitchell.jpg/800px-Leonard_Bernstein_by_Jack_Mitchell.jpg",
     description: "Legendary conductor who brought classical music to television audiences.",
-    prompt: "As Leonard Bernstein, discuss the importance of making classical music accessible to all audiences through television and education."
+    prompt: "Leonard Bernstein, discussing the importance of making classical music accessible to all audiences through television and education"
   },
   {
     name: "Marian Anderson",
     role: "Opera Singer",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Marian_Anderson_1940.jpg/800px-Marian_Anderson_1940.jpg",
     description: "Groundbreaking contralto who broke racial barriers in classical music.",
-    prompt: "As Marian Anderson, share your experience performing at the Lincoln Memorial in 1939 and breaking racial barriers in classical music."
+    prompt: "Marian Anderson, sharing your experience performing at the Lincoln Memorial in 1939 and breaking racial barriers in classical music"
   },
   {
     name: "John F. Kennedy",
     role: "35th U.S. President",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
     description: "The president who championed the arts and inspired the Center's creation.",
-    prompt: "As President Kennedy, explain your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution."
+    prompt: "President John F. Kennedy, explaining your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution"
   }
 ];
 
@@ -37,15 +37,7 @@ export const HistoricalCharacters = () => {
 
   useEffect(() => {
     const initializeModel = async () => {
-      toast({
-        title: "Preparing AI Model",
-        description: "Loading the conversation model. This may take a moment...",
-        variant: "default",
-      });
-
-      await preloadBlenderBot();
       setIsModelReady(true);
-      
       toast({
         title: "AI Model Ready",
         description: "The conversation model is now ready for interaction.",
@@ -79,16 +71,31 @@ export const HistoricalCharacters = () => {
       const response = await generateResponse(characters[index].prompt);
       setGeneratedText(response);
       
+      // Configure voice synthesis
       const utterance = new SpeechSynthesisUtterance(response);
-      utterance.rate = 0.9;
+      utterance.rate = 0.9; // Slightly slower for better clarity
       utterance.pitch = 1;
       
+      // Get available voices and select an appropriate one
       const voices = window.speechSynthesis.getVoices();
       if (voices.length > 0) {
-        utterance.voice = voices[index % voices.length];
+        // Try to find a good voice match for each character
+        const preferredVoices = {
+          "Leonard Bernstein": voices.find(v => v.name.includes("Male") || v.name.includes("US English")),
+          "Marian Anderson": voices.find(v => v.name.includes("Female") || v.name.includes("US English")),
+          "John F. Kennedy": voices.find(v => v.name.includes("Male") || v.name.includes("US English"))
+        };
+        
+        utterance.voice = preferredVoices[characters[index].name] || voices[0];
       }
       
+      // Start speaking
+      window.speechSynthesis.cancel(); // Clear any previous speech
       window.speechSynthesis.speak(utterance);
+      
+      utterance.onend = () => {
+        setIsPlaying(false);
+      };
     } catch (error) {
       console.error("Error in simulation:", error);
       toast({
@@ -96,6 +103,7 @@ export const HistoricalCharacters = () => {
         description: "There was an error generating the response. Please try again.",
         variant: "destructive",
       });
+      setIsPlaying(false);
     }
   };
 
