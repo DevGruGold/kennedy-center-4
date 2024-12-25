@@ -41,18 +41,18 @@ export const HistoricalCharacters = () => {
     setActiveCharacter(index);
     setIsPlaying(true);
     toast({
-      title: `Animating ${characters[index].name}`,
-      description: "Using Google's Gemini AI model for historical character animation...",
-      variant: "default", // Fixed the type error here
+      title: "Starting Simulation",
+      description: "This is a simulated AI animation demonstration. No actual historical figures are being recreated.",
+      variant: "default",
     });
   };
 
   const handlePause = () => {
     setIsPlaying(false);
     toast({
-      title: "Animation Paused",
-      description: "You can resume the AI-powered animation at any time.",
-      variant: "default", // Fixed the type error here
+      title: "Simulation Paused",
+      description: "The AI animation demonstration has been paused.",
+      variant: "default",
     });
   };
 
@@ -60,20 +60,25 @@ export const HistoricalCharacters = () => {
     setIsPlaying(false);
     setActiveCharacter(null);
     toast({
-      title: "Animation Reset",
-      description: "Select a character to start a new Gemini-powered animation.",
-      variant: "default", // Fixed the type error here
+      title: "Simulation Reset",
+      description: "The AI animation demonstration has been reset.",
+      variant: "default",
     });
   };
 
   return (
     <div className="py-8">
-      <h2 className="text-3xl font-bold text-primary text-center mb-8">
-        Meet Historical Figures
+      <h2 className="text-3xl font-bold text-primary text-center mb-4">
+        Historical Figure Simulations
       </h2>
-      <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-        Experience AI-powered animations of influential figures using Google's Gemini model, bringing the Kennedy Center's rich history to life.
-      </p>
+      <div className="text-center mb-8">
+        <p className="text-gray-600 mb-2 max-w-2xl mx-auto">
+          Experience simulated AI-powered animations demonstrating how historical figures might be brought to life using advanced technology.
+        </p>
+        <p className="text-sm text-gray-500 max-w-2xl mx-auto">
+          Note: This is a demonstration of potential future technology. No actual historical figures are being recreated.
+        </p>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {characters.map((character, index) => (
@@ -105,7 +110,7 @@ export const HistoricalCharacters = () => {
                     onClick={() => handlePause()}
                   >
                     <Pause className="w-4 h-4 mr-2" />
-                    Pause
+                    Pause Demo
                   </Button>
                 ) : (
                   <Button 
@@ -114,7 +119,7 @@ export const HistoricalCharacters = () => {
                     onClick={() => handlePlay(index)}
                   >
                     <Play className="w-4 h-4 mr-2" />
-                    Animate
+                    Start Demo
                   </Button>
                 )}
                 <Button 
