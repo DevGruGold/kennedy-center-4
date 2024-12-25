@@ -19,6 +19,7 @@ export const generateWithGemini = async (prompt: string): Promise<string> => {
       .from('secrets')
       .select('key_value')
       .eq('key_name', 'GEMINI_API_KEY')
+      .limit(1)
       .maybeSingle();
 
     if (secretError) {
