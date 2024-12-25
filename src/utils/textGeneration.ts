@@ -1,9 +1,9 @@
-import { pipeline, type TextGenerationOutput, type TextGenerationSingle } from "@huggingface/transformers";
+import { pipeline } from "@huggingface/transformers";
 
 const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
   const generator = await pipeline(
     "text-generation",
-    "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+    "Xenova/gpt2",  // Using a reliable model that's available for browsers
     { 
       device: "webgpu"
     }
@@ -15,11 +15,11 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
   });
 
   if (Array.isArray(output)) {
-    const firstOutput = output[0] as TextGenerationSingle;
+    const firstOutput = output[0];
     return String(firstOutput.generated_text || "No response generated");
   }
   
-  return String((output as TextGenerationSingle).generated_text || "No response generated");
+  return String(output.generated_text || "No response generated");
 };
 
 const generateOpenAIResponse = async (prompt: string): Promise<string> => {
@@ -27,7 +27,7 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
       model: "gpt-4",
@@ -49,7 +49,7 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Token ${process.env.REPLICATE_API_KEY}`,
+      'Authorization': `Token ${import.meta.env.VITE_REPLICATE_API_KEY}`,
     },
     body: JSON.stringify({
       version: "2b017567119ce1987cf8345b86545589227154c93d02f351598f471b7791f1df",
