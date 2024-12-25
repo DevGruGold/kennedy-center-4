@@ -3,12 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Pause, RotateCcw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { pipeline } from "@huggingface/transformers";
 
 interface Character {
   name: string;
   role: string;
   imageUrl: string;
   description: string;
+  prompt: string;
 }
 
 const characters: Character[] = [
@@ -16,39 +18,92 @@ const characters: Character[] = [
     name: "Leonard Bernstein",
     role: "Conductor & Composer",
     imageUrl: "/placeholder.svg",
-    description: "Legendary conductor who brought classical music to television audiences."
+    description: "Legendary conductor who brought classical music to television audiences.",
+    prompt: "As Leonard Bernstein, discuss the importance of making classical music accessible to all audiences through television and education."
   },
   {
     name: "Marian Anderson",
     role: "Opera Singer",
     imageUrl: "/placeholder.svg",
-    description: "Groundbreaking contralto who broke racial barriers in classical music."
+    description: "Groundbreaking contralto who broke racial barriers in classical music.",
+    prompt: "As Marian Anderson, share your experience performing at the Lincoln Memorial in 1939 and breaking racial barriers in classical music."
   },
   {
     name: "John F. Kennedy",
     role: "35th U.S. President",
     imageUrl: "/placeholder.svg",
-    description: "The president who championed the arts and inspired the Center's creation."
+    description: "The president who championed the arts and inspired the Center's creation.",
+    prompt: "As President Kennedy, explain your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution."
   }
 ];
 
 export const HistoricalCharacters = () => {
   const [activeCharacter, setActiveCharacter] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [generatedText, setGeneratedText] = useState<string>("");
   const { toast } = useToast();
 
-  const handlePlay = (index: number) => {
+  const generateResponse = async (character: Character) => {
+    try {
+      // Initialize the text generation pipeline
+      const generator = await pipeline(
+        "text-generation",
+        "onnx-community/gpt2-medium",
+        { device: "webgpu" }
+      );
+
+      // Generate response
+      const output = await generator(character.prompt, {
+        max_length: 100,
+        num_return_sequences: 1,
+      });
+
+      return output[0].generated_text;
+    } catch (error) {
+      console.error("Error generating response:", error);
+      return "I apologize, but I'm having trouble accessing my knowledge at the moment. Please try again later.";
+    }
+  };
+
+  const handlePlay = async (index: number) => {
     setActiveCharacter(index);
     setIsPlaying(true);
+    
     toast({
       title: "Starting Simulation",
-      description: "This is a simulated AI animation demonstration. No actual historical figures are being recreated.",
+      description: "Generating AI response. Please wait...",
       variant: "default",
     });
+
+    try {
+      const response = await generateResponse(characters[index]);
+      setGeneratedText(response);
+      
+      // Create speech synthesis
+      const utterance = new SpeechSynthesisUtterance(response);
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      
+      // Different voices for different characters
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        utterance.voice = voices[index % voices.length];
+      }
+      
+      window.speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.error("Error in simulation:", error);
+      toast({
+        title: "Simulation Error",
+        description: "There was an error generating the response. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handlePause = () => {
     setIsPlaying(false);
+    window.speechSynthesis.pause();
     toast({
       title: "Simulation Paused",
       description: "The AI animation demonstration has been paused.",
@@ -59,6 +114,8 @@ export const HistoricalCharacters = () => {
   const handleReset = () => {
     setIsPlaying(false);
     setActiveCharacter(null);
+    setGeneratedText("");
+    window.speechSynthesis.cancel();
     toast({
       title: "Simulation Reset",
       description: "The AI animation demonstration has been reset.",
@@ -73,10 +130,10 @@ export const HistoricalCharacters = () => {
       </h2>
       <div className="text-center mb-8">
         <p className="text-gray-600 mb-2 max-w-2xl mx-auto">
-          Experience simulated AI-powered animations demonstrating how historical figures might be brought to life using advanced technology.
+          Experience AI-powered simulations demonstrating how historical figures might respond to questions about their legacy.
         </p>
         <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-          Note: This is a demonstration of potential future technology. No actual historical figures are being recreated.
+          Note: This is a demonstration using AI technology to simulate historical figures' potential responses.
         </p>
       </div>
       
@@ -101,6 +158,12 @@ export const HistoricalCharacters = () => {
               <h3 className="text-xl font-semibold mb-1">{character.name}</h3>
               <p className="text-sm text-gray-500 mb-2">{character.role}</p>
               <p className="text-sm text-gray-600 mb-4">{character.description}</p>
+              
+              {activeCharacter === index && generatedText && (
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm italic">{generatedText}</p>
+                </div>
+              )}
               
               <div className="flex gap-2">
                 {activeCharacter === index && isPlaying ? (
