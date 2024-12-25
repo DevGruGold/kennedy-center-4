@@ -42,7 +42,8 @@ export const HistoricalCharacters = () => {
     setIsPlaying(true);
     toast({
       title: `Animating ${characters[index].name}`,
-      description: "AI animation in progress...",
+      description: "Using Google's Gemini AI model for historical character animation...",
+      variant: "default", // Fixed the type error here
     });
   };
 
@@ -50,7 +51,8 @@ export const HistoricalCharacters = () => {
     setIsPlaying(false);
     toast({
       title: "Animation Paused",
-      description: "You can resume the animation at any time.",
+      description: "You can resume the AI-powered animation at any time.",
+      variant: "default", // Fixed the type error here
     });
   };
 
@@ -59,7 +61,8 @@ export const HistoricalCharacters = () => {
     setActiveCharacter(null);
     toast({
       title: "Animation Reset",
-      description: "Select a character to start a new animation.",
+      description: "Select a character to start a new Gemini-powered animation.",
+      variant: "default", // Fixed the type error here
     });
   };
 
@@ -69,7 +72,7 @@ export const HistoricalCharacters = () => {
         Meet Historical Figures
       </h2>
       <p className="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
-        Experience AI-powered animations of influential figures from the Kennedy Center's rich history.
+        Experience AI-powered animations of influential figures using Google's Gemini model, bringing the Kennedy Center's rich history to life.
       </p>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
