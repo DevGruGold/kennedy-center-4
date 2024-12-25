@@ -21,9 +21,7 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
     "text-generation",
     "gpt2",
     { 
-      credentials: {
-        accessToken: hfToken.key_value
-      }
+      accessToken: hfToken.key_value // Changed from credentials object to direct accessToken
     }
   );
 
