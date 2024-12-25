@@ -8,7 +8,7 @@ interface GenerationOutput {
 const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
   const generator = await pipeline(
     "text-generation",
-    "microsoft/phi-2",  // Using a more reliable model that's available for browsers
+    "Xenova/tiny-random-gpt2",  // Using a smaller, browser-compatible model
     { 
       device: "webgpu"
     }
@@ -28,12 +28,13 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
 };
 
 const generateOpenAIResponse = async (prompt: string): Promise<string> => {
-  const { data: { OPENAI_API_KEY }, error } = await supabase
+  const { data, error } = await supabase
     .from('secrets')
-    .select('OPENAI_API_KEY')
+    .select('key_value')
+    .eq('key_name', 'OPENAI_API_KEY')
     .single();
 
-  if (error || !OPENAI_API_KEY) {
+  if (error || !data?.key_value) {
     throw new Error('OpenAI API key not found');
   }
 
@@ -41,7 +42,7 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${data.key_value}`,
     },
     body: JSON.stringify({
       model: "gpt-4",
@@ -54,17 +55,18 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
     throw new Error('OpenAI API request failed');
   }
 
-  const data = await response.json();
-  return data.choices[0].message.content;
+  const responseData = await response.json();
+  return responseData.choices[0].message.content;
 };
 
 const generateReplicateResponse = async (prompt: string): Promise<string> => {
-  const { data: { REPLICATE_API_KEY }, error } = await supabase
+  const { data, error } = await supabase
     .from('secrets')
-    .select('REPLICATE_API_KEY')
+    .select('key_value')
+    .eq('key_name', 'REPLICATE_API_KEY')
     .single();
 
-  if (error || !REPLICATE_API_KEY) {
+  if (error || !data?.key_value) {
     throw new Error('Replicate API key not found');
   }
 
@@ -72,7 +74,7 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Token ${REPLICATE_API_KEY}`,
+      'Authorization': `Token ${data.key_value}`,
     },
     body: JSON.stringify({
       version: "2b017567119ce1987cf8345b86545589227154c93d02f351598f471b7791f1df",
@@ -87,8 +89,8 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
     throw new Error('Replicate API request failed');
   }
 
-  const data = await response.json();
-  return String(data.output || "No response generated");
+  const responseData = await response.json();
+  return String(responseData.output || "No response generated");
 };
 
 export const generateResponse = async (prompt: string): Promise<string> => {
