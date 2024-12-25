@@ -13,20 +13,22 @@ interface GeminiResponse {
 export const generateWithGemini = async (prompt: string): Promise<string> => {
   try {
     console.log('Fetching Gemini API key from Supabase secrets...');
+    
+    // Use maybeSingle() instead of single() to avoid 406 errors
     const { data: secretData, error: secretError } = await supabase
       .from('secrets')
       .select('key_value')
       .eq('key_name', 'GEMINI_API_KEY')
-      .single();
+      .maybeSingle();
 
     if (secretError) {
       console.error('Error fetching Gemini API key:', secretError);
-      throw new Error('Failed to fetch Gemini API key');
+      throw new Error(`Failed to fetch Gemini API key: ${secretError.message}`);
     }
 
-    if (!secretData?.key_value) {
+    if (!secretData) {
       console.error('Gemini API key not found in secrets');
-      throw new Error('Gemini API key not found');
+      throw new Error('Gemini API key not found. Please add it to Supabase secrets.');
     }
 
     const apiKey = secretData.key_value;
