@@ -16,10 +16,10 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
     throw new Error('Hugging Face token not found');
   }
 
-  // Use a more appropriate model for conversational responses
+  // Use a model better suited for empathetic conversation
   const generator = await pipeline(
-    "text-generation",
-    "gpt2",
+    "text2text-generation",
+    "facebook/blenderbot-400M-distill",
     { 
       revision: "main"
     }
@@ -28,7 +28,7 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
   const output = await generator(prompt, {
     max_length: 150,
     num_return_sequences: 1,
-    temperature: 0.7,
+    temperature: 0.8,
     top_p: 0.9,
     do_sample: true
   });
@@ -63,7 +63,7 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
       messages: [
         {
           role: "system",
-          content: "You are an AI simulating historical figures. Respond in first person, maintaining their personality and speaking style."
+          content: "You are an AI simulating historical figures with empathy and understanding. Respond in first person, maintaining their personality, emotional depth, and speaking style while considering their historical context and experiences."
         },
         { 
           role: "user", 
@@ -71,7 +71,7 @@ const generateOpenAIResponse = async (prompt: string): Promise<string> => {
         }
       ],
       max_tokens: 150,
-      temperature: 0.7,
+      temperature: 0.8,
     }),
   });
 
@@ -103,9 +103,9 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
     body: JSON.stringify({
       version: "2b017567119ce1987cf8345b86545589227154c93d02f351598f471b7791f1df",
       input: {
-        prompt: `As a historical figure: ${prompt}`,
+        prompt: `As a historical figure speaking with empathy and understanding: ${prompt}`,
         max_new_tokens: 150,
-        temperature: 0.7,
+        temperature: 0.8,
       },
     }),
   });
@@ -120,15 +120,15 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
 
 export const generateResponse = async (prompt: string): Promise<string> => {
   try {
-    // Try OpenAI first as it's better for conversational responses
-    return await generateOpenAIResponse(prompt);
+    // Try Hugging Face first since we're using a conversational model
+    return await generateHuggingFaceResponse(prompt);
   } catch (error) {
-    console.error("OpenAI error:", error);
+    console.error("Hugging Face error:", error);
     try {
-      // Try Hugging Face as first fallback
-      return await generateHuggingFaceResponse(prompt);
-    } catch (hfError) {
-      console.error("Hugging Face error:", hfError);
+      // Try OpenAI as first fallback
+      return await generateOpenAIResponse(prompt);
+    } catch (openAIError) {
+      console.error("OpenAI error:", openAIError);
       try {
         // Try Replicate as second fallback
         return await generateReplicateResponse(prompt);
