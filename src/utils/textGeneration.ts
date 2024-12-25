@@ -14,7 +14,7 @@ export const preloadBlenderBot = async () => {
     console.log('Initializing BlenderBot model...');
     blenderBotModel = await pipeline(
       "text2text-generation",
-      "facebook/blenderbot-400M-distill",
+      "Xenova/blenderbot-400M-new",
       { 
         revision: "main",
       }
