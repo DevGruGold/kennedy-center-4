@@ -1,4 +1,4 @@
-import { HfInference } from '@huggingface/transformers';
+import { pipeline } from '@huggingface/transformers';
 import { supabase } from "@/integrations/supabase/client";
 
 let blenderBotModel: any = null;
@@ -25,8 +25,6 @@ export const preloadBlenderBot = async () => {
       return;
     }
 
-    const pipeline = (await import('@huggingface/transformers')).pipeline;
-    
     blenderBotModel = await pipeline(
       "text2text-generation",
       "Xenova/blenderbot-400M-new",
