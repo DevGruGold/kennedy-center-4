@@ -13,7 +13,7 @@ import {
   ChartBar
 } from "lucide-react";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Explore = () => {
   const { toast } = useToast();
@@ -34,11 +34,13 @@ const Explore = () => {
         toast({
           title: "Preparing artwork data",
           description: "Validating digital signatures and metadata...",
+          variant: "default"
         });
       } else if(i === 60) {
         toast({
           title: "Generating smart contract",
           description: "Creating unique token identifiers...",
+          variant: "default"
         });
       }
     }
@@ -46,7 +48,7 @@ const Explore = () => {
     toast({
       title: "Minting complete!",
       description: "Your artwork has been successfully minted on the blockchain.",
-      variant: "success",
+      variant: "default"  // Changed from "success" to "default"
     });
     
     setIsMinting(false);
