@@ -3,6 +3,7 @@ import { ArtworkCard } from "@/components/ArtworkCard";
 import { Button } from "@/components/ui/button";
 import KennedyPreviewSystem from "@/components/KennedyPreviewSystem";
 import { HistoricalCharacters } from "@/components/HistoricalCharacters";
+import { Building, Handshake, Award } from "lucide-react";
 
 const Index = () => {
   const featuredArtworks = [
@@ -31,7 +32,7 @@ const Index = () => {
       <Navigation />
       
       <main className="container mx-auto px-4">
-        {/* New Header Section */}
+        {/* Header Section */}
         <section className="relative py-20 mb-16">
           <div className="absolute inset-0 overflow-hidden">
             <img
@@ -59,6 +60,47 @@ const Index = () => {
             >
               Meet the Legends
             </Button>
+          </div>
+        </section>
+
+        {/* Co-sponsorship Section */}
+        <section className="py-16 bg-white mb-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-primary mb-4">
+                In Partnership with the Smithsonian
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                A groundbreaking collaboration between the Kennedy Center and the Smithsonian Institution,
+                bringing together arts and innovation.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <div className="text-center p-6">
+                <Building className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="font-heading text-xl font-semibold mb-2">Cultural Heritage</h3>
+                <p className="text-gray-600">
+                  Preserving and celebrating America's artistic and cultural legacy
+                </p>
+              </div>
+              
+              <div className="text-center p-6">
+                <Handshake className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="font-heading text-xl font-semibold mb-2">Joint Innovation</h3>
+                <p className="text-gray-600">
+                  Combining expertise in arts and technology
+                </p>
+              </div>
+              
+              <div className="text-center p-6">
+                <Award className="w-12 h-12 text-primary mx-auto mb-4" />
+                <h3 className="font-heading text-xl font-semibold mb-2">Excellence</h3>
+                <p className="text-gray-600">
+                  Setting new standards in digital art curation
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
