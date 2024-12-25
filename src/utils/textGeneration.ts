@@ -6,6 +6,7 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
     "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
     { 
       device: "webgpu",
+      credentials: 'omit'
     }
   );
 
@@ -16,10 +17,10 @@ const generateHuggingFaceResponse = async (prompt: string): Promise<string> => {
 
   if (Array.isArray(output)) {
     const firstOutput = output[0] as TextGenerationSingle;
-    return firstOutput.generated_text || "No response generated";
+    return String(firstOutput.generated_text || "No response generated");
   }
   
-  return ((output as TextGenerationSingle).generated_text) || "No response generated";
+  return String((output as TextGenerationSingle).generated_text || "No response generated");
 };
 
 const generateOpenAIResponse = async (prompt: string): Promise<string> => {
@@ -65,7 +66,7 @@ const generateReplicateResponse = async (prompt: string): Promise<string> => {
   }
 
   const data = await response.json();
-  return data.output || "No response generated";
+  return String(data.output || "No response generated");
 };
 
 export const generateResponse = async (prompt: string): Promise<string> => {
