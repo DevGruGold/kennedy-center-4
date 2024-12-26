@@ -2,6 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const playWithElevenLabs = async (
   text: string,
+  voiceId: string,
   onWordBoundary?: (wordIndex: number) => void
 ): Promise<boolean> => {
   try {
@@ -20,10 +21,8 @@ export const playWithElevenLabs = async (
 
     console.log("Retrieved API key from Supabase, initiating TTS request...");
     
-    const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Chris's voice for JFK
-    
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}/stream`,
       {
         method: "POST",
         headers: {

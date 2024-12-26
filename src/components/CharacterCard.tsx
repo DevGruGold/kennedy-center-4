@@ -1,7 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Pause, RotateCcw } from "lucide-react";
+import { Play, Pause, RotateCcw, Volume2 } from "lucide-react";
 import { CharacterCardProps } from "@/types/historical";
+import { playWithElevenLabs } from "@/utils/audioPlayback";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 export const CharacterCard = ({
   character,
@@ -13,6 +16,33 @@ export const CharacterCard = ({
   onPause,
   onReset,
 }: CharacterCardProps) => {
+  const [isPlayingVoice, setIsPlayingVoice] = useState(false);
+  const { toast } = useToast();
+
+  const handlePlayVoice = async () => {
+    if (!generatedText) {
+      toast({
+        title: "No text to speak",
+        description: "Generate some text first by starting the demo",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsPlayingVoice(true);
+    try {
+      await playWithElevenLabs(generatedText, character.voiceId);
+    } catch (error) {
+      console.error("Voice playback error:", error);
+      toast({
+        title: "Voice Playback Error",
+        description: "Failed to play voice. Please try again.",
+        variant: "destructive",
+      });
+    }
+    setIsPlayingVoice(false);
+  };
+
   return (
     <Card 
       className={`transition-all duration-300 ${
@@ -67,6 +97,16 @@ export const CharacterCard = ({
           >
             <RotateCcw className="w-4 h-4" />
           </Button>
+          {isActive && generatedText && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={handlePlayVoice}
+              disabled={isPlayingVoice}
+            >
+              <Volume2 className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
