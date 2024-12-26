@@ -3,7 +3,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { CharacterCard } from "./CharacterCard";
 import { generateResponse } from "@/utils/textGeneration";
 import { Character } from "@/types/historical";
-import { supabase } from "@/integrations/supabase/client";
+import { playWithElevenLabs, playWithBrowserSpeech } from "@/utils/audioPlayback";
+import { SimulationControls } from "./simulation/SimulationControls";
 
 const character: Character = {
   name: "John F. Kennedy",
@@ -26,72 +27,6 @@ export const HistoricalCharacters = () => {
       variant: "default",
     });
   }, [toast]);
-
-  const playWithElevenLabs = async (text: string) => {
-    try {
-      const { data: secrets, error } = await supabase
-        .from('secrets')
-        .select('key_value')
-        .eq('key_name', 'ELEVEN_LABS_API_KEY')
-        .maybeSingle();
-      
-      if (error) {
-        console.error("Error fetching ElevenLabs API key:", error);
-        throw new Error("Failed to fetch ElevenLabs API key");
-      }
-
-      if (!secrets?.key_value) {
-        console.error("ElevenLabs API key not found in secrets");
-        throw new Error("ElevenLabs API key not found");
-      }
-
-      const ELEVEN_LABS_API_KEY = secrets.key_value;
-      const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Using Chris's voice
-      
-      console.log("Making request to ElevenLabs API...");
-      const response = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream/with-timestamps?optimize_streaming_latency=0`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "xi-api-key": ELEVEN_LABS_API_KEY,
-          },
-          body: JSON.stringify({
-            text,
-            model_id: "eleven_monolingual_v1",
-            voice_settings: {
-              stability: 0.5,
-              similarity_boost: 0.75,
-            },
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        console.error("ElevenLabs API error:", response.status, response.statusText);
-        const errorText = await response.text();
-        console.error("Error details:", errorText);
-        throw new Error(`Failed to generate speech: ${response.statusText}`);
-      }
-
-      console.log("Successfully received audio response");
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      
-      audio.onended = () => {
-        setIsPlaying(false);
-        URL.revokeObjectURL(audioUrl);
-      };
-      
-      audio.play();
-      return true;
-    } catch (error) {
-      console.error("ElevenLabs error:", error);
-      return false;
-    }
-  };
 
   const handlePlay = async () => {
     console.log("Play button clicked");
@@ -120,28 +55,7 @@ export const HistoricalCharacters = () => {
       
       if (!elevenLabsSuccess) {
         console.log("Falling back to browser speech synthesis");
-        const utterance = new SpeechSynthesisUtterance(response);
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
-        
-        const voices = window.speechSynthesis.getVoices();
-        console.log("Available voices:", voices);
-        
-        if (voices.length > 0) {
-          const preferredVoice = voices.find(v => 
-            v.name.includes("Male") && v.name.includes("US")
-          ) || voices[0];
-          utterance.voice = preferredVoice;
-          console.log("Selected voice:", preferredVoice);
-        }
-        
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-        
-        utterance.onend = () => {
-          console.log("Speech synthesis completed");
-          setIsPlaying(false);
-        };
+        await playWithBrowserSpeech(response);
       }
     } catch (error) {
       console.error("Error in simulation:", error);
