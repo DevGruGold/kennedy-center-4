@@ -12,13 +12,16 @@ export const playWithElevenLabs = async (
       .maybeSingle();
     
     if (!secrets?.key_value) {
+      console.error("ElevenLabs API key not found in Supabase secrets");
       throw new Error("ElevenLabs API key not found");
     }
 
+    console.log("Attempting TTS with ElevenLabs...");
+    
     const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Chris's voice for JFK
     
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-with-timestamps`,
       {
         method: "POST",
         headers: {
@@ -39,6 +42,7 @@ export const playWithElevenLabs = async (
     );
 
     if (!response.ok) {
+      console.error(`ElevenLabs API error: ${response.status} ${response.statusText}`);
       throw new Error(`ElevenLabs API error: ${response.statusText}`);
     }
 
@@ -51,48 +55,52 @@ export const playWithElevenLabs = async (
       let currentWordIndex = 0;
       let wordTimer: NodeJS.Timeout | null = null;
       
-      audio.onloadedmetadata = () => {
+      const cleanupResources = () => {
+        if (wordTimer) {
+          clearInterval(wordTimer);
+          wordTimer = null;
+        }
         if (onWordBoundary) {
-          const wordDuration = audio.duration / words.length;
+          onWordBoundary(-1); // Reset highlighting
+        }
+        URL.revokeObjectURL(audioUrl);
+      };
+
+      audio.onloadedmetadata = () => {
+        console.log("Audio loaded, duration:", audio.duration);
+        if (onWordBoundary) {
+          // Calculate word duration based on average speaking rate
+          // Assuming average speaking rate of 150 words per minute
+          const averageWordsPerMinute = 150;
+          const wordDuration = (60 / averageWordsPerMinute);
+          
           wordTimer = setInterval(() => {
             if (currentWordIndex < words.length) {
+              console.log("Highlighting word:", currentWordIndex, words[currentWordIndex]);
               onWordBoundary(currentWordIndex);
               currentWordIndex++;
             } else {
-              if (wordTimer) {
-                clearInterval(wordTimer);
-              }
+              cleanupResources();
             }
           }, wordDuration * 1000);
         }
       };
 
       audio.onended = () => {
-        if (wordTimer) {
-          clearInterval(wordTimer);
-        }
-        if (onWordBoundary) {
-          onWordBoundary(-1); // Reset highlighting
-        }
-        URL.revokeObjectURL(audioUrl);
+        console.log("Audio playback ended");
+        cleanupResources();
         resolve(true);
       };
 
-      audio.onerror = () => {
-        if (wordTimer) {
-          clearInterval(wordTimer);
-        }
-        console.error("Audio playback error");
-        URL.revokeObjectURL(audioUrl);
+      audio.onerror = (e) => {
+        console.error("Audio playback error:", e);
+        cleanupResources();
         resolve(false);
       };
 
       audio.play().catch((error) => {
-        if (wordTimer) {
-          clearInterval(wordTimer);
-        }
-        console.error("Audio playback error:", error);
-        URL.revokeObjectURL(audioUrl);
+        console.error("Audio play error:", error);
+        cleanupResources();
         resolve(false);
       });
     });
