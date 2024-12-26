@@ -43,7 +43,7 @@ export const HistoricalCharacters = () => {
       const VOICE_ID = "pqHfZKP75CvOlQylNhV4"; // Bill's voice ID, which sounds similar to JFK
       
       const response = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
+        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream/with-timestamps`,
         {
           method: "POST",
           headers: {
@@ -57,6 +57,7 @@ export const HistoricalCharacters = () => {
               stability: 0.5,
               similarity_boost: 0.75,
             },
+            optimize_streaming_latency: 0,
           }),
         }
       );
