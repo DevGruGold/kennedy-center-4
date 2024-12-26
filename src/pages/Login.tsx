@@ -26,6 +26,14 @@ const Login = () => {
           description: "You have been signed out successfully.",
         });
       }
+      // Handle redirect errors
+      if (event === 'USER_UPDATED' && !session) {
+        toast({
+          variant: "destructive",
+          title: "Authentication Error",
+          description: "Please try signing in again.",
+        });
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -56,6 +64,7 @@ const Login = () => {
                 }}
                 theme="light"
                 providers={[]}
+                redirectTo={`${window.location.origin}/login`}
                 localization={{
                   variables: {
                     sign_in: {
