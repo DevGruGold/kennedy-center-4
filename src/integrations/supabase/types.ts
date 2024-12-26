@@ -286,24 +286,36 @@ export type Database = {
       tokens: {
         Row: {
           artwork_id: string
+          blockchain_status: string | null
+          contract_address: string | null
           created_at: string
           id: string
           owner_id: string
+          token_metadata: Json | null
           token_uri: string
+          transaction_hash: string | null
         }
         Insert: {
           artwork_id: string
+          blockchain_status?: string | null
+          contract_address?: string | null
           created_at?: string
           id?: string
           owner_id: string
+          token_metadata?: Json | null
           token_uri: string
+          transaction_hash?: string | null
         }
         Update: {
           artwork_id?: string
+          blockchain_status?: string | null
+          contract_address?: string | null
           created_at?: string
           id?: string
           owner_id?: string
+          token_metadata?: Json | null
           token_uri?: string
+          transaction_hash?: string | null
         }
         Relationships: [
           {

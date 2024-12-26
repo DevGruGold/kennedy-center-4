@@ -37,7 +37,13 @@ const Profile = () => {
   const fetchArtworks = async (userId: string) => {
     const { data, error } = await supabase
       .from('artworks')
-      .select('*')
+      .select(`
+        *,
+        tokens (
+          id,
+          blockchain_status
+        )
+      `)
       .eq('creator_id', userId)
       .order('created_at', { ascending: false });
 
@@ -51,18 +57,8 @@ const Profile = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error("Not authenticated");
 
-      const { error } = await supabase
-        .from('tokens')
-        .insert({
-          artwork_id: artworkId,
-          token_uri: `ipfs://placeholder/${artworkId}`,
-          owner_id: session.user.id,
-        });
-
-      if (error) throw error;
-
-      // Refresh artworks
-      fetchArtworks(session.user.id);
+      // Refresh artworks after tokenization
+      await fetchArtworks(session.user.id);
     } catch (error: any) {
       console.error("Error tokenizing artwork:", error);
     }
@@ -96,10 +92,13 @@ const Profile = () => {
                     {artworks.map((artwork) => (
                       <ArtworkCard
                         key={artwork.id}
+                        id={artwork.id}
                         title={artwork.title}
                         artist={userEmail || "Anonymous"}
                         imageUrl={artwork.image_url}
                         status={artwork.token_id ? "Tokenized" : undefined}
+                        showTokenize={true}
+                        onTokenize={handleTokenize}
                       />
                     ))}
                   </div>
