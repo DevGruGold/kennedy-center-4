@@ -70,7 +70,6 @@ export const playWithElevenLabs = async (
         console.log("Audio loaded, duration:", audio.duration);
         if (onWordBoundary) {
           // Calculate word duration based on average speaking rate
-          // Assuming average speaking rate of 150 words per minute
           const averageWordsPerMinute = 150;
           const wordDuration = (60 / averageWordsPerMinute);
           
