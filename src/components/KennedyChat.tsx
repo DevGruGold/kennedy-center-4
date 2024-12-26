@@ -25,8 +25,49 @@ export const KennedyChat = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Load user's chat history when component mounts
+  useEffect(() => {
+    loadChatHistory();
+  }, []);
+
+  const loadChatHistory = async () => {
+    const { data: session } = await supabase.auth.getSession();
+    if (!session?.session?.user) {
+      console.log("User not authenticated");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select('*')
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error("Error loading chat history:", error);
+      return;
+    }
+
+    if (data) {
+      const formattedMessages = data.map(msg => ({
+        role: msg.role as 'user' | 'assistant',
+        content: msg.content
+      }));
+      setMessages(formattedMessages);
+    }
+  };
+
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
+
+    const { data: session } = await supabase.auth.getSession();
+    if (!session?.session?.user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to use the chat feature",
+        variant: "destructive",
+      });
+      return;
+    }
 
     const newMessage = {
       role: 'user' as const,
@@ -37,11 +78,16 @@ export const KennedyChat = () => {
     setInputMessage("");
 
     try {
-      // Store message in Supabase
-      await supabase.from('chat_messages').insert({
-        content: inputMessage,
-        role: 'user'
-      });
+      // Store user message in Supabase
+      const { error: insertError } = await supabase
+        .from('chat_messages')
+        .insert({
+          content: inputMessage,
+          role: 'user',
+          user_id: session.session.user.id
+        });
+
+      if (insertError) throw insertError;
 
       // Call Gemini edge function
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
@@ -62,10 +108,14 @@ export const KennedyChat = () => {
         
         setMessages(prev => [...prev, assistantMessage]);
         
-        await supabase.from('chat_messages').insert({
-          content: data.generatedText,
-          role: 'assistant'
-        });
+        // Store assistant message in Supabase
+        await supabase
+          .from('chat_messages')
+          .insert({
+            content: data.generatedText,
+            role: 'assistant',
+            user_id: session.session.user.id
+          });
       }
     } catch (error) {
       console.error("Error in chat:", error);
