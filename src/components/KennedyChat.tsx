@@ -25,18 +25,11 @@ export const KennedyChat = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Load user's chat history when component mounts
   useEffect(() => {
     loadChatHistory();
   }, []);
 
   const loadChatHistory = async () => {
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.session?.user) {
-      console.log("User not authenticated");
-      return;
-    }
-
     const { data, error } = await supabase
       .from('chat_messages')
       .select('*')
@@ -59,16 +52,6 @@ export const KennedyChat = () => {
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
 
-    const { data: session } = await supabase.auth.getSession();
-    if (!session?.session?.user) {
-      toast({
-        title: "Authentication Required",
-        description: "Please log in to use the chat feature",
-        variant: "destructive",
-      });
-      return;
-    }
-
     const newMessage = {
       role: 'user' as const,
       content: inputMessage
@@ -83,8 +66,7 @@ export const KennedyChat = () => {
         .from('chat_messages')
         .insert({
           content: inputMessage,
-          role: 'user',
-          user_id: session.session.user.id
+          role: 'user'
         });
 
       if (insertError) throw insertError;
@@ -113,8 +95,7 @@ export const KennedyChat = () => {
           .from('chat_messages')
           .insert({
             content: data.generatedText,
-            role: 'assistant',
-            user_id: session.session.user.id
+            role: 'assistant'
           });
       }
     } catch (error) {
