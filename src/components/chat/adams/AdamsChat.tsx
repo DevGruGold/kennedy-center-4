@@ -7,7 +7,7 @@ import { playWithElevenLabs } from "@/utils/voiceUtils";
 import { ChatProps } from "@/types/historical";
 
 export const AdamsChat = ({ voiceId }: ChatProps) => {
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSendMessage = async (message: string) => {
@@ -32,7 +32,7 @@ export const AdamsChat = ({ voiceId }: ChatProps) => {
 
   return (
     <div className="flex flex-col h-[600px] bg-white rounded-lg shadow-md">
-      <ChatHeader name="John Adams" role="2nd U.S. President" />
+      <ChatHeader title="John Adams" subtitle="2nd U.S. President" />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <ChatMessage
@@ -42,7 +42,7 @@ export const AdamsChat = ({ voiceId }: ChatProps) => {
           />
         ))}
       </div>
-      <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+      <ChatInput sendMessage={handleSendMessage} isLoading={isLoading} />
     </div>
   );
 };
