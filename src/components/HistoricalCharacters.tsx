@@ -3,6 +3,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { CharacterCard } from "./CharacterCard";
 import { generateResponse } from "@/utils/textGeneration";
 import { Character } from "@/types/historical";
+import { supabase } from "@/integrations/supabase/client";
 
 const character: Character = {
   name: "John F. Kennedy",
@@ -26,6 +27,59 @@ export const HistoricalCharacters = () => {
     });
   }, [toast]);
 
+  const playWithElevenLabs = async (text: string) => {
+    try {
+      const { data: secrets } = await supabase
+        .from('secrets')
+        .select('key_value')
+        .eq('key_name', 'ELEVEN_LABS_API_KEY')
+        .single();
+      
+      if (!secrets?.key_value) {
+        throw new Error("ElevenLabs API key not found");
+      }
+
+      const ELEVEN_LABS_API_KEY = secrets.key_value;
+      const VOICE_ID = "pqHfZKP75CvOlQylNhV4"; // Bill's voice ID, which sounds similar to JFK
+      
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "xi-api-key": ELEVEN_LABS_API_KEY,
+          },
+          body: JSON.stringify({
+            text,
+            model_id: "eleven_monolingual_v1",
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.75,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to generate speech");
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      
+      audio.onended = () => {
+        setIsPlaying(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+      
+      audio.play();
+      return true;
+    } catch (error) {
+      console.error("ElevenLabs error:", error);
+      return false;
+    }
+  };
+
   const handlePlay = async () => {
     console.log("Play button clicked");
     setIsPlaying(true);
@@ -48,28 +102,34 @@ export const HistoricalCharacters = () => {
 
       setGeneratedText(response);
       
-      const utterance = new SpeechSynthesisUtterance(response);
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
+      // Try ElevenLabs first, fall back to browser speech synthesis if it fails
+      const elevenLabsSuccess = await playWithElevenLabs(response);
       
-      const voices = window.speechSynthesis.getVoices();
-      console.log("Available voices:", voices);
-      
-      if (voices.length > 0) {
-        const preferredVoice = voices.find(v => 
-          v.name.includes("Male") && v.name.includes("US")
-        ) || voices[0];
-        utterance.voice = preferredVoice;
-        console.log("Selected voice:", preferredVoice);
+      if (!elevenLabsSuccess) {
+        console.log("Falling back to browser speech synthesis");
+        const utterance = new SpeechSynthesisUtterance(response);
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        
+        const voices = window.speechSynthesis.getVoices();
+        console.log("Available voices:", voices);
+        
+        if (voices.length > 0) {
+          const preferredVoice = voices.find(v => 
+            v.name.includes("Male") && v.name.includes("US")
+          ) || voices[0];
+          utterance.voice = preferredVoice;
+          console.log("Selected voice:", preferredVoice);
+        }
+        
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+        
+        utterance.onend = () => {
+          console.log("Speech synthesis completed");
+          setIsPlaying(false);
+        };
       }
-      
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
-      
-      utterance.onend = () => {
-        console.log("Speech synthesis completed");
-        setIsPlaying(false);
-      };
     } catch (error) {
       console.error("Error in simulation:", error);
       toast({
@@ -112,7 +172,7 @@ export const HistoricalCharacters = () => {
           Experience an AI-powered simulation of President Kennedy discussing his vision for the arts and culture in America.
         </p>
         <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-          Powered by Google's Gemini Pro AI model
+          Powered by Google's Gemini Pro AI model and ElevenLabs voice synthesis
         </p>
       </div>
       
