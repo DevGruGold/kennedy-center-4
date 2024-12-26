@@ -46,7 +46,7 @@ export const HistoricalCharacters = () => {
       }
 
       const ELEVEN_LABS_API_KEY = secrets.key_value;
-      const VOICE_ID = "ErXwobaYiN019PkySvjV"; // Updated to use the specified voice ID
+      const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Updated to use Chris's voice
       
       const response = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream/with-timestamps`,
