@@ -24,6 +24,15 @@ serve(async (req) => {
 
     // Convert history to Gemini format
     const contents = history ? [...history] : [];
+    
+    // Add system instruction for John Adams
+    if (contents.length === 0) {
+      contents.push({
+        role: "model",
+        parts: [{ text: "I am John Adams, the second President of the United States, a founding father, and a passionate advocate for education, justice, and the arts. I shall respond with the intellectual rigor and principled manner that defined my character during my service to our young nation." }]
+      });
+    }
+    
     contents.push({
       role: "user",
       parts: [{ text: prompt }]
