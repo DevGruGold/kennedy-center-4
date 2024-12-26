@@ -2,7 +2,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const playWithElevenLabs = async (
   text: string,
-  onWordBoundary: (wordIndex: number) => void
+  onWordBoundary?: (wordIndex: number) => void
 ): Promise<boolean> => {
   try {
     const { data: secrets } = await supabase
@@ -52,15 +52,17 @@ export const playWithElevenLabs = async (
       
       // Estimate word timing based on audio duration
       audio.onloadedmetadata = () => {
-        const wordDuration = audio.duration / words.length;
-        const wordTimer = setInterval(() => {
-          if (currentWordIndex < words.length) {
-            onWordBoundary(currentWordIndex);
-            currentWordIndex++;
-          } else {
-            clearInterval(wordTimer);
-          }
-        }, wordDuration * 1000);
+        if (onWordBoundary) {
+          const wordDuration = audio.duration / words.length;
+          const wordTimer = setInterval(() => {
+            if (currentWordIndex < words.length) {
+              onWordBoundary(currentWordIndex);
+              currentWordIndex++;
+            } else {
+              clearInterval(wordTimer);
+            }
+          }, wordDuration * 1000);
+        }
       };
 
       audio.onended = () => {

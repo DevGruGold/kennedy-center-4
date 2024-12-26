@@ -105,8 +105,8 @@ export const KennedyChat = () => {
           });
 
         try {
-          // Play the response using ElevenLabs
-          await playWithElevenLabs(data.generatedText, (wordIndex) => {
+          // Play the response using ElevenLabs with optional word boundary callback
+          await playWithElevenLabs(data.generatedText, (wordIndex: number) => {
             setHighlightedWordIndex(wordIndex);
           });
         } catch (voiceError) {
