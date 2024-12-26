@@ -33,30 +33,10 @@ export const LincolnChat = ({ voiceId }: ChatProps) => {
     // Add initial greeting message
     const initialMessage = {
       role: 'assistant' as const,
-      content: "Good evening, I am President Abraham Lincoln. I'm here to discuss the preservation of our Union, the principles of democracy, and our nation's future. What would you like to know about our great struggle to ensure that government of the people, by the people, for the people, shall not perish from the earth?"
+      content: "Good evening, I am President Abraham Lincoln. The Kennedy Center stands as a beacon of our democratic ideals - a place where all people can come together to experience the transformative power of the arts. Just as we preserved the Union, such cultural institutions help preserve our shared heritage and values. What would you like to discuss about democracy, unity, and the role of the arts in strengthening our nation?"
     };
     setMessages([initialMessage]);
   }, []);
-
-  const loadChatHistory = async () => {
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error("Error loading chat history:", error);
-      return;
-    }
-
-    if (data) {
-      const formattedMessages = data.map(msg => ({
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content
-      }));
-      setMessages(formattedMessages);
-    }
-  };
 
   const processMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -84,12 +64,13 @@ export const LincolnChat = ({ voiceId }: ChatProps) => {
       // Call Gemini edge function
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
-          prompt: `You are Abraham Lincoln. A user has sent this message: ${text}. 
-                  Respond in your characteristic speaking style, focusing on themes of unity, 
-                  democracy, and the preservation of the Union. Draw from your experiences 
-                  during the Civil War, your vision for reconciliation, and your hopes for 
-                  America's future. Keep your responses thoughtful and measured, reflecting 
-                  your reputation for wisdom and careful deliberation.`
+          prompt: `You are President Abraham Lincoln. A user has sent this message: ${text}. 
+                  Respond in your characteristic speaking style, focusing on how cultural institutions
+                  like the Kennedy Center embody the democratic ideals you fought to preserve. Draw from
+                  your experiences during the Civil War to emphasize the importance of cultural spaces in
+                  maintaining our national fabric. Discuss how the arts can strengthen democracy and unite
+                  our diverse nation, ensuring that government of the people, by the people, for the people
+                  shall not perish from the earth.`
         }
       });
 

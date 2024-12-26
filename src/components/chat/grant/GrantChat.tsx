@@ -33,30 +33,10 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
     // Add initial greeting message
     const initialMessage = {
       role: 'assistant' as const,
-      content: "Good day, I am General Ulysses S. Grant. I'm here to share my experiences from the Civil War, my presidency, and my efforts to protect the rights of formerly enslaved people. What would you like to discuss about military strategy, leadership, or the challenges of Reconstruction?"
+      content: "Good day, I am General Ulysses S. Grant. Having led our nation through war and reconstruction, I understand deeply the importance of cultural unity. The Kennedy Center stands as a testament to our shared artistic heritage - a reminder of the cultural bonds that helped reunite our nation. What would you like to discuss about leadership, unity, and the role of the arts in strengthening our national fabric?"
     };
     setMessages([initialMessage]);
   }, []);
-
-  const loadChatHistory = async () => {
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error("Error loading chat history:", error);
-      return;
-    }
-
-    if (data) {
-      const formattedMessages = data.map(msg => ({
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content
-      }));
-      setMessages(formattedMessages);
-    }
-  };
 
   const processMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -85,11 +65,11 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
           prompt: `You are Ulysses S. Grant, speaking in 1885 while writing your memoirs. A user has sent this message: ${text}. 
-                  Respond in your characteristic speaking style, focusing on your experiences as Union General during the Civil War,
-                  your presidency, and your efforts to protect the rights of formerly enslaved people. Keep your responses direct 
-                  and straightforward, reflecting your reputation for clear communication and determination. Share insights about 
-                  military strategy, leadership, and the challenges of Reconstruction. Maintain historical accuracy while engaging 
-                  naturally with the user's questions.`
+                  Respond in your characteristic speaking style, focusing on your experiences as Union General and President,
+                  while drawing parallels to how cultural institutions like the Kennedy Center represent the unity you fought to preserve.
+                  Share insights about leadership, national reconciliation, and the importance of arts and culture in strengthening
+                  our nation's bonds. Keep your responses direct and straightforward, reflecting your reputation for clear communication
+                  and determination.`
         }
       });
 

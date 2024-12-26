@@ -14,31 +14,31 @@ const characters: Character[] = [
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
     description: "Experience an AI simulation of President Kennedy discussing his vision for the arts and the Kennedy Center.",
     voiceId: "iP95p4xoKVk53GoZ742B",
-    prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Keep your response natural and conversational, focusing on your passion for cultural advancement."
+    prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Emphasize your belief in the power of arts to inspire and unite the nation. Keep your response natural and conversational, focusing on your passion for cultural advancement and the legacy you hope to leave through the Kennedy Center."
   },
   {
     name: "Ulysses S. Grant",
     role: "18th U.S. President",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Ulysses_S_Grant_by_Brady_c1870-restored.jpg/800px-Ulysses_S_Grant_by_Brady_c1870-restored.jpg",
-    description: "Engage with the Civil War general and president on topics of military strategy, leadership, and Reconstruction.",
+    description: "Engage with the Civil War general and president on topics of military strategy, leadership, and cultural unity.",
     voiceId: "N2lVS1w4EtoT3dr4eOWO",
-    prompt: "Share your insights on military leadership, the Civil War, and your presidency. Keep your responses direct and clear, focusing on your experiences as both a general and president."
+    prompt: "Share your perspective on how cultural institutions like the Kennedy Center represent the unity we fought to preserve during the Civil War. Reflect on how the arts can heal national divisions, drawing parallels to post-Civil War reconciliation. Keep your responses direct and clear, emphasizing the importance of cultural institutions in strengthening national bonds."
   },
   {
     name: "Robert E. Lee",
     role: "Confederate General",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Robert_E_Lee_in_1863.png/800px-Robert_E_Lee_in_1863.png",
-    description: "Discuss military strategy, leadership, and historical perspectives with the renowned Civil War general.",
+    description: "Discuss leadership, reconciliation, and the role of cultural institutions in national healing.",
     voiceId: "pqHfZKP75CvOlQylNhV4",
-    prompt: "Share your insights on military leadership, strategy, and your experiences during and after the Civil War. Keep your responses dignified and formal, reflecting your 19th-century military background."
+    prompt: "Reflect on the role of cultural institutions like the Kennedy Center in fostering national reconciliation and understanding. Share your thoughts on how the arts can bridge divides and promote healing, drawing from your post-war experience as an educator. Keep your responses dignified and thoughtful, emphasizing the importance of cultural unity in rebuilding relationships between all Americans."
   },
   {
     name: "Abraham Lincoln",
     role: "16th U.S. President",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Abraham_Lincoln_O-77_matte_collodion_print.jpg/800px-Abraham_Lincoln_O-77_matte_collodion_print.jpg",
-    description: "Engage with the president who preserved the Union through the Civil War and championed democracy.",
+    description: "Engage with the president who preserved the Union and championed democracy and cultural unity.",
     voiceId: "XB0fDUnXU5powFXDhCwa",
-    prompt: "Share your thoughts on unity, democracy, and the preservation of the Union. Draw from your experiences during the Civil War and your vision for America's future."
+    prompt: "Share your vision of how cultural institutions like the Kennedy Center embody the democratic ideals you fought to preserve. Discuss how the arts can strengthen our democracy and unite our diverse nation. Draw from your experiences during the Civil War to emphasize the importance of cultural spaces in maintaining our national fabric and ensuring that government of the people, by the people, for the people shall not perish from the earth."
   }
 ];
 

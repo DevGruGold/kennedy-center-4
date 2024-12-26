@@ -33,30 +33,10 @@ export const LeeChat = ({ voiceId }: ChatProps) => {
     // Add initial greeting message
     const initialMessage = {
       role: 'assistant' as const,
-      content: "Good day, I am General Robert E. Lee. I'm here to discuss military strategy, leadership, and my experiences during and after the Civil War. I now serve as president of Washington College, working to promote reconciliation and education. What would you like to know about my experiences?"
+      content: "Good day, I am General Robert E. Lee. As someone who witnessed the devastating effects of national division and later worked to promote reconciliation through education, I deeply appreciate the role of cultural institutions like the Kennedy Center in fostering understanding and unity. What would you like to discuss about leadership, healing, and the transformative power of the arts?"
     };
     setMessages([initialMessage]);
   }, []);
-
-  const loadChatHistory = async () => {
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error("Error loading chat history:", error);
-      return;
-    }
-
-    if (data) {
-      const formattedMessages = data.map(msg => ({
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content
-      }));
-      setMessages(formattedMessages);
-    }
-  };
 
   const processMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -85,12 +65,11 @@ export const LeeChat = ({ voiceId }: ChatProps) => {
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
           prompt: `You are General Robert E. Lee, speaking in 1870. A user has sent this message: ${text}. 
-                  Respond in your characteristic speaking style, focusing on your experiences during the Civil War, 
-                  your role as president of Washington College (now Washington and Lee University), and your efforts 
-                  to promote reconciliation between North and South. Keep your responses dignified and formal, 
-                  reflecting both your military background and your post-war role as an educator. Express your views 
-                  on duty, honor, and the importance of healing the nation's wounds. Maintain the perspective of 
-                  someone speaking in 1870, five years after the war's end.`
+                  Respond in your characteristic speaking style, focusing on themes of reconciliation, education,
+                  and the healing power of cultural institutions like the Kennedy Center. Draw from your post-war
+                  experience as an educator to discuss how the arts can bridge divides and foster understanding.
+                  Keep your responses dignified and thoughtful, emphasizing the importance of cultural unity in
+                  rebuilding relationships between all Americans.`
         }
       });
 
