@@ -18,27 +18,31 @@ serve(async (req) => {
       throw new Error('Gemini API key not found in environment variables');
     }
 
-    const { prompt } = await req.json();
+    const { prompt, history } = await req.json();
     console.log('Received prompt:', prompt);
+    console.log('Received history:', history);
+
+    // Convert history to Gemini format
+    const contents = history ? [...history] : [];
+    contents.push({
+      role: "user",
+      parts: [{ text: prompt }]
+    });
 
     const requestBody = {
-      contents: [{
-        parts: [{
-          text: `You are President John F. Kennedy. Respond in first person as JFK, maintaining his characteristic speaking style and mannerisms. Focus on your passion for the arts and cultural advancement. Here is what you should respond to: ${prompt}`
-        }]
-      }],
+      contents,
       generationConfig: {
-        temperature: 0.9,
-        topP: 1,
+        temperature: 1,
+        topP: 0.95,
         topK: 40,
-        maxOutputTokens: 800,
-      }
+        maxOutputTokens: 8192,
+      },
     };
 
     console.log('Sending request to Gemini API...');
     
     const response = await fetch(
-      'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
+      'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

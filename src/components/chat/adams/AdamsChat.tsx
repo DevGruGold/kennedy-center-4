@@ -2,9 +2,9 @@ import { useState } from "react";
 import { ChatHeader } from "../ChatHeader";
 import { ChatInput } from "../ChatInput";
 import { ChatMessage } from "../ChatMessage";
-import { generateWithOpenAI } from "@/utils/textGeneration/openaiService";
 import { playWithElevenLabs } from "@/utils/voiceUtils";
 import { ChatProps } from "@/types/historical";
+import { supabase } from "@/integrations/supabase/client";
 
 export const AdamsChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
@@ -15,11 +15,24 @@ export const AdamsChat = ({ voiceId }: ChatProps) => {
       setIsLoading(true);
       setMessages((prev) => [...prev, { role: "user", content: message }]);
 
-      const prompt = `You are John Adams, the second President of the United States. Respond in first person as Adams, maintaining his characteristic intellectual and principled speaking style. Focus on your thoughts about education, arts, and cultural development in America. Here is what you should respond to: ${message}`;
+      // Call the Gemini edge function
+      const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
+        body: { 
+          prompt: message,
+          history: messages.map(msg => ({
+            role: msg.role === "user" ? "user" : "model",
+            parts: [msg.content]
+          }))
+        }
+      });
 
-      const response = await generateWithOpenAI(prompt);
-      
-      if (response) {
+      if (error) {
+        console.error("Error calling Gemini function:", error);
+        throw error;
+      }
+
+      if (data?.generatedText) {
+        const response = data.generatedText;
         setMessages((prev) => [...prev, { role: "assistant", content: response }]);
         await playWithElevenLabs(response);
       }
