@@ -30,28 +30,13 @@ export const KennedyChat = ({ voiceId }: ChatProps) => {
   }, [messages]);
 
   useEffect(() => {
-    loadChatHistory();
+    // Add initial greeting message
+    const initialMessage = {
+      role: 'assistant' as const,
+      content: "Good day, I'm President John F. Kennedy. I'm here to share my vision for the arts in America and discuss the cultural legacy we're building through institutions like the Kennedy Center. What would you like to know about our initiatives in advancing the arts and culture in our great nation?"
+    };
+    setMessages([initialMessage]);
   }, []);
-
-  const loadChatHistory = async () => {
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select('*')
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error("Error loading chat history:", error);
-      return;
-    }
-
-    if (data) {
-      const formattedMessages = data.map(msg => ({
-        role: msg.role as 'user' | 'assistant',
-        content: msg.content
-      }));
-      setMessages(formattedMessages);
-    }
-  };
 
   const processMessage = async (text: string) => {
     if (!text.trim()) return;

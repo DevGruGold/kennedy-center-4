@@ -95,7 +95,7 @@ export const HistoricalCharacters = () => {
               <h3 className="text-xl font-semibold text-center mb-2">{characters[0].name}</h3>
               <p className="text-gray-600 text-center">{characters[0].description}</p>
             </div>
-            <KennedyChat voiceId={characters[0].voiceId} />
+            <KennedyChat voiceId={characters[0].voiceId} key={activeCharacter} />
           </TabsContent>
           <TabsContent value="grant">
             <div className="mb-8">
@@ -107,7 +107,7 @@ export const HistoricalCharacters = () => {
               <h3 className="text-xl font-semibold text-center mb-2">{characters[1].name}</h3>
               <p className="text-gray-600 text-center">{characters[1].description}</p>
             </div>
-            <GrantChat voiceId={characters[1].voiceId} />
+            <GrantChat voiceId={characters[1].voiceId} key={activeCharacter} />
           </TabsContent>
           <TabsContent value="lee">
             <div className="mb-8">
@@ -119,7 +119,7 @@ export const HistoricalCharacters = () => {
               <h3 className="text-xl font-semibold text-center mb-2">{characters[2].name}</h3>
               <p className="text-gray-600 text-center">{characters[2].description}</p>
             </div>
-            <LeeChat voiceId={characters[2].voiceId} />
+            <LeeChat voiceId={characters[2].voiceId} key={activeCharacter} />
           </TabsContent>
           <TabsContent value="lincoln">
             <div className="mb-8">
@@ -131,7 +131,7 @@ export const HistoricalCharacters = () => {
               <h3 className="text-xl font-semibold text-center mb-2">{characters[3].name}</h3>
               <p className="text-gray-600 text-center">{characters[3].description}</p>
             </div>
-            <LincolnChat voiceId={characters[3].voiceId} />
+            <LincolnChat voiceId={characters[3].voiceId} key={activeCharacter} />
           </TabsContent>
         </Tabs>
       </div>
