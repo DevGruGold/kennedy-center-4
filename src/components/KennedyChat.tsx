@@ -104,10 +104,13 @@ export const KennedyChat = () => {
             role: 'assistant'
           });
 
+        // Play audio with word highlighting
+        const handleWordBoundary = (index: number) => {
+          setHighlightedWordIndex(index);
+        };
+
         try {
-          await playWithElevenLabs(data.generatedText, (wordIndex: number) => {
-            setHighlightedWordIndex(wordIndex);
-          });
+          await playWithElevenLabs(data.generatedText, handleWordBoundary);
         } catch (voiceError) {
           console.error("Voice playback error:", voiceError);
           toast({

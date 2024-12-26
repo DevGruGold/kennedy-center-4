@@ -51,17 +51,15 @@ export const playWithElevenLabs = async (
       let currentWordIndex = 0;
       
       if (onWordBoundary) {
-        audio.onloadedmetadata = () => {
-          const wordDuration = audio.duration / words.length;
-          const wordTimer = setInterval(() => {
-            if (currentWordIndex < words.length) {
-              onWordBoundary(currentWordIndex);
-              currentWordIndex++;
-            } else {
-              clearInterval(wordTimer);
-            }
-          }, wordDuration * 1000);
-        };
+        const wordDuration = audio.duration / words.length;
+        const wordTimer = setInterval(() => {
+          if (currentWordIndex < words.length) {
+            onWordBoundary(currentWordIndex);
+            currentWordIndex++;
+          } else {
+            clearInterval(wordTimer);
+          }
+        }, wordDuration * 1000);
       }
 
       audio.onended = () => {
