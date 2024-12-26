@@ -61,6 +61,14 @@ const characters: Character[] = [
     description: "Engage with the president who preserved the Union and championed democracy and cultural unity.",
     voiceId: "XB0fDUnXU5powFXDhCwa",
     prompt: "Share your vision of how cultural institutions like the Kennedy Center embody the democratic ideals you fought to preserve. Discuss how the arts can strengthen our democracy and unite our diverse nation. Draw from your experiences during the Civil War to emphasize the importance of cultural spaces in maintaining our national fabric and ensuring that government of the people, by the people, for the people shall not perish from the earth."
+  },
+  {
+    name: "Frederick Douglass",
+    role: "Abolitionist & Orator",
+    imageUrl: "https://storage.googleapis.com/pai-images/2024-03-19/1710823200/frederick_douglass.jpg",
+    description: "Engage with the renowned abolitionist and orator on education, cultural advancement, and human dignity.",
+    voiceId: "XB0fDUnXU5powFXDhCwa", // Using Charlotte's voice for a deep, resonant tone
+    prompt: "Share your perspective on how cultural institutions like the Kennedy Center can advance the cause of human dignity and education. Discuss how the arts can elevate society and promote understanding across racial divides, drawing from your experiences as an abolitionist and champion of human rights. Keep your responses eloquent and powerful, emphasizing the transformative power of education and culture."
   }
 ];
 
