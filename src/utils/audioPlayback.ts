@@ -50,21 +50,25 @@ export const playWithElevenLabs = async (
       const words = text.split(' ');
       let currentWordIndex = 0;
       
-      if (onWordBoundary) {
-        const wordDuration = audio.duration / words.length;
-        const wordTimer = setInterval(() => {
-          if (currentWordIndex < words.length) {
-            onWordBoundary(currentWordIndex);
-            currentWordIndex++;
-          } else {
-            clearInterval(wordTimer);
-          }
-        }, wordDuration * 1000);
-      }
+      audio.onloadedmetadata = () => {
+        if (onWordBoundary) {
+          const wordDuration = audio.duration / words.length;
+          const wordTimer = setInterval(() => {
+            if (currentWordIndex < words.length) {
+              onWordBoundary(currentWordIndex);
+              currentWordIndex++;
+            } else {
+              clearInterval(wordTimer);
+            }
+          }, wordDuration * 1000);
 
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        resolve(true);
+          audio.onended = () => {
+            clearInterval(wordTimer);
+            onWordBoundary(-1); // Reset highlighting
+            URL.revokeObjectURL(audioUrl);
+            resolve(true);
+          };
+        }
       };
 
       audio.onerror = () => {
