@@ -3,46 +3,89 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Submit = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    email: "",
-    artworkUrl: ""
+    image: null as File | null,
   });
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate("/login");
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to submit artwork",
+          variant: "destructive",
+        });
+      }
+    };
+    checkAuth();
+  }, [navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    try {
-      const response = await fetch("https://formsubmit.co/joeyleepcs@gmail.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json"
-        },
-        body: JSON.stringify({
-          ...formData,
-          _subject: `New Artwork Submission: ${formData.title}`
-        })
-      });
+    setIsLoading(true);
 
-      if (response.ok) {
-        toast({
-          title: "Success!",
-          description: "Your artwork has been submitted successfully."
-        });
-        setFormData({ title: "", description: "", email: "", artworkUrl: "" });
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Not authenticated");
       }
-    } catch (error) {
+
+      if (!formData.image) {
+        throw new Error("Please select an image");
+      }
+
+      // Upload image to storage
+      const fileExt = formData.image.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const { data: imageData, error: uploadError } = await supabase.storage
+        .from('artworks')
+        .upload(fileName, formData.image);
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('artworks')
+        .getPublicUrl(fileName);
+
+      // Create artwork record
+      const { error: insertError } = await supabase
+        .from('artworks')
+        .insert({
+          title: formData.title,
+          description: formData.description,
+          image_url: publicUrl,
+          creator_id: session.user.id,
+        });
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Success!",
+        description: "Your artwork has been submitted successfully.",
+      });
+      
+      navigate("/profile");
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "There was a problem submitting your artwork.",
-        variant: "destructive"
+        description: error.message || "There was a problem submitting your artwork.",
+        variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,33 +125,20 @@ const Submit = () => {
             </div>
             
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Your Email
+              <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
+                Artwork Image
               </label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFormData({ ...formData, image: e.target.files?.[0] || null })}
                 required
               />
             </div>
             
-            <div>
-              <label htmlFor="artworkUrl" className="block text-sm font-medium text-gray-700 mb-1">
-                Artwork URL
-              </label>
-              <Input
-                id="artworkUrl"
-                type="url"
-                value={formData.artworkUrl}
-                onChange={(e) => setFormData({ ...formData, artworkUrl: e.target.value })}
-                required
-              />
-            </div>
-            
-            <Button type="submit" className="w-full">
-              Submit Artwork
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Submitting..." : "Submit Artwork"}
             </Button>
           </form>
         </div>

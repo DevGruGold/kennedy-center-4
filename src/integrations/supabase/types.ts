@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      artworks: {
+        Row: {
+          created_at: string
+          creator_id: string
+          description: string | null
+          id: string
+          image_url: string
+          title: string
+          token_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          id?: string
+          image_url: string
+          title: string
+          token_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          title?: string
+          token_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           car_id: string
@@ -228,6 +261,38 @@ export type Database = {
           key_value?: string
         }
         Relationships: []
+      }
+      tokens: {
+        Row: {
+          artwork_id: string
+          created_at: string
+          id: string
+          owner_id: string
+          token_uri: string
+        }
+        Insert: {
+          artwork_id: string
+          created_at?: string
+          id?: string
+          owner_id: string
+          token_uri: string
+        }
+        Update: {
+          artwork_id?: string
+          created_at?: string
+          id?: string
+          owner_id?: string
+          token_uri?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tokens_artwork_id_fkey"
+            columns: ["artwork_id"]
+            isOneToOne: false
+            referencedRelation: "artworks"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_rewards: {
         Row: {
