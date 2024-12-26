@@ -47,7 +47,6 @@ export const HistoricalCharacters = () => {
   const [activeCharacter, setActiveCharacter] = useState("kennedy");
 
   useEffect(() => {
-    console.log("Component mounted");
     toast({
       title: "AI Models Ready",
       description: "The historical figure simulations are ready for interaction.",
@@ -56,84 +55,108 @@ export const HistoricalCharacters = () => {
   }, [toast]);
 
   return (
-    <div className="py-8">
-      <h2 className="text-3xl font-bold text-primary text-center mb-4">
-        Meet Historical Figures
-      </h2>
-      <div className="text-center mb-8">
-        <p className="text-gray-600 mb-2 max-w-2xl mx-auto">
-          Experience AI-powered simulations of historical figures discussing their lives, achievements, and perspectives.
-        </p>
-        <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-          Powered by Google's Gemini Pro AI model and ElevenLabs voice synthesis
-        </p>
-      </div>
-      
-      <div className="max-w-2xl mx-auto">
-        <Tabs defaultValue="kennedy" className="w-full" onValueChange={setActiveCharacter}>
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
-            <TabsTrigger value="kennedy" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-              John F. Kennedy
-            </TabsTrigger>
-            <TabsTrigger value="grant" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-              Ulysses S. Grant
-            </TabsTrigger>
-            <TabsTrigger value="lee" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-              Robert E. Lee
-            </TabsTrigger>
-            <TabsTrigger value="lincoln" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-              Abraham Lincoln
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="kennedy">
-            <div className="mb-8">
-              <img
-                src={characters[0].imageUrl}
-                alt={characters[0].name}
-                className="w-48 h-48 object-cover rounded-full mx-auto mb-4"
-              />
-              <h3 className="text-xl font-semibold text-center mb-2">{characters[0].name}</h3>
-              <p className="text-gray-600 text-center">{characters[0].description}</p>
+    <div className="py-12 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-primary text-center mb-6">
+          Meet Historical Figures
+        </h2>
+        <div className="text-center mb-12">
+          <p className="text-lg text-gray-600 mb-3 max-w-2xl mx-auto">
+            Experience AI-powered simulations of historical figures discussing their lives, achievements, and perspectives.
+          </p>
+          <p className="text-sm text-gray-500 max-w-2xl mx-auto">
+            Powered by advanced AI technology and realistic avatar generation
+          </p>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
+          <Tabs defaultValue="kennedy" className="w-full" onValueChange={setActiveCharacter}>
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1 mb-8">
+              <TabsTrigger value="kennedy" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+                John F. Kennedy
+              </TabsTrigger>
+              <TabsTrigger value="grant" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+                Ulysses S. Grant
+              </TabsTrigger>
+              <TabsTrigger value="lee" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+                Robert E. Lee
+              </TabsTrigger>
+              <TabsTrigger value="lincoln" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+                Abraham Lincoln
+              </TabsTrigger>
+            </TabsList>
+
+            <div className="mt-8">
+              <TabsContent value="kennedy">
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                  <div>
+                    <img
+                      src={characters[0].imageUrl}
+                      alt={characters[0].name}
+                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
+                    />
+                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[0].name}</h3>
+                    <p className="text-gray-600 text-center">{characters[0].description}</p>
+                  </div>
+                  <div className="h-full">
+                    <KennedyChat voiceId={characters[0].voiceId} key={activeCharacter} />
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="grant">
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                  <div>
+                    <img
+                      src={characters[1].imageUrl}
+                      alt={characters[1].name}
+                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
+                    />
+                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[1].name}</h3>
+                    <p className="text-gray-600 text-center">{characters[1].description}</p>
+                  </div>
+                  <div className="h-full">
+                    <GrantChat voiceId={characters[1].voiceId} key={activeCharacter} />
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="lee">
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                  <div>
+                    <img
+                      src={characters[2].imageUrl}
+                      alt={characters[2].name}
+                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
+                    />
+                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[2].name}</h3>
+                    <p className="text-gray-600 text-center">{characters[2].description}</p>
+                  </div>
+                  <div className="h-full">
+                    <LeeChat voiceId={characters[2].voiceId} key={activeCharacter} />
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="lincoln">
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                  <div>
+                    <img
+                      src={characters[3].imageUrl}
+                      alt={characters[3].name}
+                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
+                    />
+                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[3].name}</h3>
+                    <p className="text-gray-600 text-center">{characters[3].description}</p>
+                  </div>
+                  <div className="h-full">
+                    <LincolnChat voiceId={characters[3].voiceId} key={activeCharacter} />
+                  </div>
+                </div>
+              </TabsContent>
             </div>
-            <KennedyChat voiceId={characters[0].voiceId} key={activeCharacter} />
-          </TabsContent>
-          <TabsContent value="grant">
-            <div className="mb-8">
-              <img
-                src={characters[1].imageUrl}
-                alt={characters[1].name}
-                className="w-48 h-48 object-cover rounded-full mx-auto mb-4"
-              />
-              <h3 className="text-xl font-semibold text-center mb-2">{characters[1].name}</h3>
-              <p className="text-gray-600 text-center">{characters[1].description}</p>
-            </div>
-            <GrantChat voiceId={characters[1].voiceId} key={activeCharacter} />
-          </TabsContent>
-          <TabsContent value="lee">
-            <div className="mb-8">
-              <img
-                src={characters[2].imageUrl}
-                alt={characters[2].name}
-                className="w-48 h-48 object-cover rounded-full mx-auto mb-4"
-              />
-              <h3 className="text-xl font-semibold text-center mb-2">{characters[2].name}</h3>
-              <p className="text-gray-600 text-center">{characters[2].description}</p>
-            </div>
-            <LeeChat voiceId={characters[2].voiceId} key={activeCharacter} />
-          </TabsContent>
-          <TabsContent value="lincoln">
-            <div className="mb-8">
-              <img
-                src={characters[3].imageUrl}
-                alt={characters[3].name}
-                className="w-48 h-48 object-cover rounded-full mx-auto mb-4"
-              />
-              <h3 className="text-xl font-semibold text-center mb-2">{characters[3].name}</h3>
-              <p className="text-gray-600 text-center">{characters[3].description}</p>
-            </div>
-            <LincolnChat voiceId={characters[3].voiceId} key={activeCharacter} />
-          </TabsContent>
-        </Tabs>
+          </Tabs>
+        </div>
       </div>
     </div>
   );

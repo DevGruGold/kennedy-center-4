@@ -48,11 +48,11 @@ export const TalkingAvatar = ({ imageUrl, text, isPlaying, onPlaybackComplete }:
   }, [text, isPlaying, imageUrl, toast]);
 
   return (
-    <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
+    <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-100 shadow-inner">
       {streamUrl ? (
         <video
           ref={videoRef}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-opacity duration-300"
           onEnded={onPlaybackComplete}
           playsInline
         >
@@ -63,8 +63,14 @@ export const TalkingAvatar = ({ imageUrl, text, isPlaying, onPlaybackComplete }:
         <img
           src={imageUrl}
           alt="Historical figure"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-opacity duration-300"
         />
+      )}
+      
+      {isPlaying && !streamUrl && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+          <div className="animate-pulse text-white">Loading...</div>
+        </div>
       )}
     </div>
   );
