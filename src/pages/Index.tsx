@@ -9,9 +9,6 @@ interface Artwork {
   title: string;
   image_url: string;
   creator_id: string;
-  creator: {
-    display_name: string | null;
-  } | null;
 }
 
 const Index = () => {
@@ -24,8 +21,7 @@ const Index = () => {
           id,
           title,
           image_url,
-          creator_id,
-          creator:profiles(display_name)
+          creator_id
         `)
         .order('created_at', { ascending: false })
         .limit(6);
@@ -104,7 +100,7 @@ const Index = () => {
                 <ArtworkCard
                   key={artwork.id}
                   title={artwork.title}
-                  artist={artwork.creator?.display_name || "Anonymous"}
+                  artist="Anonymous"
                   imageUrl={artwork.image_url}
                 />
               ))
