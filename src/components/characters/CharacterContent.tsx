@@ -2,6 +2,7 @@ import { Character } from "@/types/historical";
 import { TabsContent } from "@/components/ui/tabs";
 import { CharacterProfile } from "./CharacterProfile";
 import { KennedyChat } from "../chat/kennedy/KennedyChat";
+import { AdamsChat } from "../chat/adams/AdamsChat";
 import { GrantChat } from "../chat/grant/GrantChat";
 import { LeeChat } from "../chat/lee/LeeChat";
 import { LincolnChat } from "../chat/lincoln/LincolnChat";
@@ -25,6 +26,8 @@ export const CharacterContent = ({
     switch (value) {
       case 'johnfkennedy':
         return <KennedyChat voiceId={character.voiceId} />;
+      case 'johnadams':
+        return <AdamsChat voiceId={character.voiceId} />;
       case 'georgewashington':
         return <WashingtonChat voiceId={character.voiceId} />;
       case 'ulyssessgrant':

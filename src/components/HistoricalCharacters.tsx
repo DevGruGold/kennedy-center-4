@@ -15,6 +15,14 @@ const characters: Character[] = [
     prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Emphasize your belief in the power of arts to inspire and unite the nation. Keep your response natural and conversational, focusing on your passion for cultural advancement and the legacy you hope to leave through the Kennedy Center."
   },
   {
+    name: "John Adams",
+    role: "2nd U.S. President",
+    imageUrl: "https://storage.googleapis.com/pai-images/2024-03-19/1710823200/1710823200.jpg",
+    description: "Engage with the founding father on the importance of education, arts, and cultural development in a young republic.",
+    voiceId: "TX3LPaxmHKxFdv7VOQHJ",
+    prompt: "Share your perspective on how institutions like the Kennedy Center embody your vision of promoting education and the arts in our republic. Discuss how cultural advancement strengthens democracy and enlightens citizens, drawing from your experience as a diplomat and advocate for education. Keep your responses thoughtful and philosophical, emphasizing the connection between cultural institutions and the preservation of liberty."
+  },
+  {
     name: "George Washington",
     role: "1st U.S. President",
     imageUrl: "https://storage.googleapis.com/pai-images/ae3e0b6cebf04cf0a9c6c5e1338eee66.jpeg",
