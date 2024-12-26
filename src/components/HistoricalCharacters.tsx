@@ -4,6 +4,7 @@ import { Character } from "@/types/historical";
 import { KennedyChat } from "./chat/kennedy/KennedyChat";
 import { CaesarChat } from "./chat/caesar/CaesarChat";
 import { LeeChat } from "./chat/lee/LeeChat";
+import { LincolnChat } from "./chat/lincoln/LincolnChat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const characters: Character[] = [
@@ -12,7 +13,7 @@ const characters: Character[] = [
     role: "35th U.S. President",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
     description: "Experience an AI simulation of President Kennedy discussing his vision for the arts and the Kennedy Center.",
-    voiceId: "iP95p4xoKVk53GoZ742B", // Chris's voice
+    voiceId: "iP95p4xoKVk53GoZ742B",
     prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Keep your response natural and conversational, focusing on your passion for cultural advancement."
   },
   {
@@ -20,7 +21,7 @@ const characters: Character[] = [
     role: "Roman Emperor",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Julius_Caesar_%28100-44_BC%29.JPG/800px-Julius_Caesar_%28100-44_BC%29.JPG",
     description: "Engage with the legendary Roman leader on topics of leadership, conquest, and Roman culture.",
-    voiceId: "N2lVS1w4EtoT3dr4eOWO", // Callum's voice (authoritative British accent)
+    voiceId: "N2lVS1w4EtoT3dr4eOWO",
     prompt: "Share your insights on leadership, the Roman Empire, and your military conquests. Keep your responses natural and engaging, focusing on your experiences as a leader."
   },
   {
@@ -28,8 +29,16 @@ const characters: Character[] = [
     role: "Confederate General",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Robert_Edward_Lee.jpg/800px-Robert_Edward_Lee.jpg",
     description: "Discuss military strategy, leadership, and historical perspectives with the renowned Civil War general.",
-    voiceId: "pqHfZKP75CvOlQylNhV4", // Bill's voice (dignified Southern accent)
+    voiceId: "pqHfZKP75CvOlQylNhV4",
     prompt: "Share your insights on military leadership, strategy, and your experiences during and after the Civil War. Keep your responses dignified and formal, reflecting your 19th-century military background."
+  },
+  {
+    name: "Abraham Lincoln",
+    role: "16th U.S. President",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Abraham_Lincoln_O-77_matte_collodion_print.jpg/800px-Abraham_Lincoln_O-77_matte_collodion_print.jpg",
+    description: "Engage with the president who preserved the Union through the Civil War and championed democracy.",
+    voiceId: "XB0fDUnXU5powFXDhCwa",
+    prompt: "Share your thoughts on unity, democracy, and the preservation of the Union. Draw from your experiences during the Civil War and your vision for America's future."
   }
 ];
 
@@ -62,10 +71,11 @@ export const HistoricalCharacters = () => {
       
       <div className="max-w-2xl mx-auto">
         <Tabs defaultValue="kennedy" className="w-full" onValueChange={setActiveCharacter}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="kennedy">John F. Kennedy</TabsTrigger>
             <TabsTrigger value="caesar">Julius Caesar</TabsTrigger>
             <TabsTrigger value="lee">Robert E. Lee</TabsTrigger>
+            <TabsTrigger value="lincoln">Abraham Lincoln</TabsTrigger>
           </TabsList>
           <TabsContent value="kennedy">
             <div className="mb-8">
@@ -102,6 +112,18 @@ export const HistoricalCharacters = () => {
               <p className="text-gray-600 text-center">{characters[2].description}</p>
             </div>
             <LeeChat voiceId={characters[2].voiceId} />
+          </TabsContent>
+          <TabsContent value="lincoln">
+            <div className="mb-8">
+              <img
+                src={characters[3].imageUrl}
+                alt={characters[3].name}
+                className="w-48 h-48 object-cover rounded-full mx-auto mb-4"
+              />
+              <h3 className="text-xl font-semibold text-center mb-2">{characters[3].name}</h3>
+              <p className="text-gray-600 text-center">{characters[3].description}</p>
+            </div>
+            <LincolnChat voiceId={characters[3].voiceId} />
           </TabsContent>
         </Tabs>
       </div>
