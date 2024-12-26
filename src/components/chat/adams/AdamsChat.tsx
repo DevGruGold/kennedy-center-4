@@ -21,7 +21,7 @@ export const AdamsChat = ({ voiceId }: ChatProps) => {
       
       if (response) {
         setMessages((prev) => [...prev, { role: "assistant", content: response }]);
-        await playWithElevenLabs(response);
+        await playWithElevenLabs(response, voiceId);
       }
     } catch (error) {
       console.error("Error in Adams chat:", error);
