@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChatHeader } from "../ChatHeader";
 import { ChatInput } from "../ChatInput";
 import { ChatMessage } from "../ChatMessage";
@@ -9,6 +9,15 @@ import { supabase } from "@/integrations/supabase/client";
 export const AdamsChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    // Add initial greeting message
+    const initialMessage = {
+      role: 'assistant' as const,
+      content: "Greetings, I am John Adams, second President of these United States and a steadfast advocate for education, justice, and the arts. As one who helped forge this nation's foundation, I am particularly intrigued by institutions like the Kennedy Center that embody our commitment to cultural advancement. What would you like to discuss about the role of arts and education in preserving our republic's virtues?"
+    };
+    setMessages([initialMessage]);
+  }, []);
 
   const handleSendMessage = async (message: string) => {
     try {
