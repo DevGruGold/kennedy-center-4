@@ -105,10 +105,9 @@ export const KennedyChat = () => {
           });
 
         // Play the response using ElevenLabs with word highlighting
-        await playWithElevenLabs(
-          data.generatedText,
-          (wordIndex) => setHighlightedWordIndex(wordIndex)
-        );
+        await playWithElevenLabs(data.generatedText, (wordIndex) => {
+          setHighlightedWordIndex(wordIndex);
+        });
         
         // Reset highlight after playback
         setHighlightedWordIndex(-1);
