@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { CharacterCard } from "./CharacterCard";
-import { generateResponse } from "@/utils/textGeneration";
 import { Character } from "@/types/historical";
-import { playWithElevenLabs, playWithBrowserSpeech } from "@/utils/audioPlayback";
-import { SimulationControls } from "./simulation/SimulationControls";
+import { KennedyChat } from "./KennedyChat";
 
 const character: Character = {
   name: "John F. Kennedy",
@@ -15,8 +12,6 @@ const character: Character = {
 };
 
 export const HistoricalCharacters = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [generatedText, setGeneratedText] = useState<string>("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -27,67 +22,6 @@ export const HistoricalCharacters = () => {
       variant: "default",
     });
   }, [toast]);
-
-  const handlePlay = async () => {
-    console.log("Play button clicked");
-    setIsPlaying(true);
-    setGeneratedText("");
-    
-    toast({
-      title: "Starting Simulation",
-      description: "Generating President Kennedy's response. Please wait...",
-      variant: "default",
-    });
-
-    try {
-      console.log("Attempting to generate response...");
-      const response = await generateResponse(character.prompt);
-      console.log("Received AI response:", response);
-      
-      if (!response) {
-        throw new Error("No response received from AI");
-      }
-
-      setGeneratedText(response);
-      
-      // Try ElevenLabs first, fall back to browser speech synthesis if it fails
-      const elevenLabsSuccess = await playWithElevenLabs(response);
-      
-      if (!elevenLabsSuccess) {
-        console.log("Falling back to browser speech synthesis");
-        await playWithBrowserSpeech(response);
-      }
-    } catch (error) {
-      console.error("Error in simulation:", error);
-      toast({
-        title: "Simulation Error",
-        description: `Error: ${error.message}. Please try again.`,
-        variant: "destructive",
-      });
-      setIsPlaying(false);
-    }
-  };
-
-  const handlePause = () => {
-    setIsPlaying(false);
-    window.speechSynthesis.pause();
-    toast({
-      title: "Simulation Paused",
-      description: "The AI simulation has been paused.",
-      variant: "default",
-    });
-  };
-
-  const handleReset = () => {
-    setIsPlaying(false);
-    setGeneratedText("");
-    window.speechSynthesis.cancel();
-    toast({
-      title: "Simulation Reset",
-      description: "The AI simulation has been reset.",
-      variant: "default",
-    });
-  };
 
   return (
     <div className="py-8">
@@ -103,17 +37,17 @@ export const HistoricalCharacters = () => {
         </p>
       </div>
       
-      <div className="max-w-xl mx-auto">
-        <CharacterCard
-          character={character}
-          index={0}
-          isActive={true}
-          isPlaying={isPlaying}
-          generatedText={generatedText}
-          onPlay={handlePlay}
-          onPause={handlePause}
-          onReset={handleReset}
-        />
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-8">
+          <img
+            src={character.imageUrl}
+            alt={character.name}
+            className="w-48 h-48 object-cover rounded-full mx-auto mb-4"
+          />
+          <h3 className="text-xl font-semibold text-center mb-2">{character.name}</h3>
+          <p className="text-gray-600 text-center">{character.description}</p>
+        </div>
+        <KennedyChat />
       </div>
     </div>
   );

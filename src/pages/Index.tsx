@@ -1,10 +1,8 @@
 import { Navigation } from "@/components/Navigation";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { Button } from "@/components/ui/button";
-import KennedyPreviewSystem from "@/components/KennedyPreviewSystem";
 import { HistoricalCharacters } from "@/components/HistoricalCharacters";
 import { Building, Handshake, Award } from "lucide-react";
-import { KennedyChat } from "@/components/KennedyChat";
 
 const Index = () => {
   const featuredArtworks = [
@@ -105,46 +103,8 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="text-center mb-16 animate-fadeIn">
-          <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-4 leading-tight">
-            Digital Art Platform
-          </h1>
-          <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-2xl mx-auto px-4">
-            Submit your digital artwork, mint NFTs, and receive institutional funding support
-            from the Kennedy Center.
-          </p>
-          <div className="space-x-4">
-            <Button
-              size="lg"
-              className="bg-secondary text-primary hover:bg-secondary/90"
-              onClick={() => window.location.href = '/submit'}
-            >
-              Submit Artwork
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="hidden md:inline-block"
-              onClick={() => window.location.href = '/about'}
-            >
-              Learn More
-            </Button>
-          </div>
-        </section>
-
-        <section className="mb-16">
-          <KennedyPreviewSystem />
-        </section>
-
         <section id="historical-characters" className="mb-16">
           <HistoricalCharacters />
-        </section>
-
-        <section className="mb-16">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-primary text-center mb-8">
-            Interactive Chat with President Kennedy
-          </h2>
-          <KennedyChat />
         </section>
 
         <section className="mb-16">

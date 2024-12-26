@@ -1,16 +1,9 @@
 import { supabase } from "@/integrations/supabase/client";
 
-interface VoiceSettings {
-  stability: number;
-  similarity_boost: number;
-  style: number;
-  use_speaker_boost: boolean;
-}
-
 export const playWithElevenLabs = async (
   text: string,
-  onWordBoundary?: (wordIndex: number) => void
-): Promise<void> => {
+  onWordBoundary: (wordIndex: number) => void
+): Promise<boolean> => {
   try {
     const { data: secrets } = await supabase
       .from('secrets')
@@ -22,16 +15,10 @@ export const playWithElevenLabs = async (
       throw new Error("ElevenLabs API key not found");
     }
 
-    const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // JFK voice ID
-    const voiceSettings: VoiceSettings = {
-      stability: 0.3,
-      similarity_boost: 0.85,
-      style: 1.0,
-      use_speaker_boost: true
-    };
-
+    const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Chris's voice for JFK
+    
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-with-timestamps`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
       {
         method: "POST",
         headers: {
@@ -41,7 +28,12 @@ export const playWithElevenLabs = async (
         body: JSON.stringify({
           text,
           model_id: "eleven_monolingual_v1",
-          voice_settings: voiceSettings,
+          voice_settings: {
+            stability: 0.3,
+            similarity_boost: 0.85,
+            style: 1.0,
+            use_speaker_boost: true
+          },
         }),
       }
     );
@@ -54,7 +46,7 @@ export const playWithElevenLabs = async (
     const audioUrl = URL.createObjectURL(audioBlob);
     const audio = new Audio(audioUrl);
     
-    return new Promise<void>((resolve) => {
+    return new Promise<boolean>((resolve) => {
       const words = text.split(' ');
       let currentWordIndex = 0;
       
@@ -63,7 +55,7 @@ export const playWithElevenLabs = async (
         const wordDuration = audio.duration / words.length;
         const wordTimer = setInterval(() => {
           if (currentWordIndex < words.length) {
-            onWordBoundary?.(currentWordIndex);
+            onWordBoundary(currentWordIndex);
             currentWordIndex++;
           } else {
             clearInterval(wordTimer);
@@ -73,17 +65,31 @@ export const playWithElevenLabs = async (
 
       audio.onended = () => {
         URL.revokeObjectURL(audioUrl);
-        resolve();
+        resolve(true);
+      };
+
+      audio.onerror = () => {
+        console.error("Audio playback error");
+        URL.revokeObjectURL(audioUrl);
+        resolve(false);
       };
 
       audio.play().catch((error) => {
         console.error("Audio playback error:", error);
         URL.revokeObjectURL(audioUrl);
-        resolve();
+        resolve(false);
       });
     });
   } catch (error) {
     console.error("ElevenLabs error:", error);
-    throw error;
+    return false;
   }
+};
+
+export const playWithBrowserSpeech = async (text: string): Promise<void> => {
+  return new Promise((resolve) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.onend = () => resolve();
+    window.speechSynthesis.speak(utterance);
+  });
 };
