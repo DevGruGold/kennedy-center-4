@@ -14,12 +14,9 @@ interface Message {
 
 export const KennedyChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,9 +35,9 @@ export const KennedyChat = ({ voiceId }: ChatProps) => {
     setMessages([initialMessage]);
   }, []);
 
-  const processMessage = async (text: string) => {
+  const handleSendMessage = async (text: string) => {
     if (!text.trim()) return;
-    setIsProcessing(true);
+    setIsLoading(true);
 
     const newMessage = {
       role: 'user' as const,
@@ -48,7 +45,6 @@ export const KennedyChat = ({ voiceId }: ChatProps) => {
     };
 
     setMessages(prev => [...prev, newMessage]);
-    setInputMessage("");
 
     try {
       // Store user message
@@ -96,39 +92,7 @@ export const KennedyChat = ({ voiceId }: ChatProps) => {
         variant: "destructive",
       });
     } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const toggleRecording = () => {
-    if (isRecording) {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      setIsRecording(false);
-    } else {
-      try {
-        recognitionRef.current = startVoiceRecognition(
-          (text) => {
-            setInputMessage(text);
-            processMessage(text);
-          },
-          () => setIsRecording(false)
-        );
-        setIsRecording(true);
-        toast({
-          title: "Recording Started",
-          description: "Speak your message to President Kennedy",
-        });
-      } catch (error) {
-        console.error("Voice recognition error:", error);
-        toast({
-          title: "Error",
-          description: "Failed to start voice recording. Please check your microphone permissions.",
-          variant: "destructive",
-        });
-        setIsRecording(false);
-      }
+      setIsLoading(false);
     }
   };
 
@@ -145,12 +109,8 @@ export const KennedyChat = ({ voiceId }: ChatProps) => {
         <div ref={messagesEndRef} />
       </div>
       <ChatInput
-        inputMessage={inputMessage}
-        setInputMessage={setInputMessage}
-        sendMessage={() => processMessage(inputMessage)}
-        isRecording={isRecording}
-        toggleRecording={toggleRecording}
-        isProcessing={isProcessing}
+        sendMessage={handleSendMessage}
+        isLoading={isLoading}
       />
     </div>
   );

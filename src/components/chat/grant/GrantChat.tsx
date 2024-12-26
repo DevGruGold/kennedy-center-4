@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "../ChatMessage";
 import { ChatInput } from "../ChatInput";
 import { ChatHeader } from "../ChatHeader";
-import { startVoiceRecognition } from "@/utils/voiceUtils";
 import { ChatProps } from "@/types/historical";
 
 interface Message {
@@ -14,12 +13,9 @@ interface Message {
 
 export const GrantChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,7 +26,6 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
   }, [messages]);
 
   useEffect(() => {
-    // Add initial greeting message
     const initialMessage = {
       role: 'assistant' as const,
       content: "Good day, I am General Ulysses S. Grant. Having led our nation through war and reconstruction, I understand deeply the importance of cultural unity. The Kennedy Center stands as a testament to our shared artistic heritage - a reminder of the cultural bonds that helped reunite our nation. What would you like to discuss about leadership, unity, and the role of the arts in strengthening our national fabric?"
@@ -38,9 +33,9 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
     setMessages([initialMessage]);
   }, []);
 
-  const processMessage = async (text: string) => {
+  const handleSendMessage = async (text: string) => {
     if (!text.trim()) return;
-    setIsProcessing(true);
+    setIsLoading(true);
 
     const newMessage = {
       role: 'user' as const,
@@ -48,10 +43,8 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
     };
 
     setMessages(prev => [...prev, newMessage]);
-    setInputMessage("");
 
     try {
-      // Store user message
       const { error: insertError } = await supabase
         .from('chat_messages')
         .insert({
@@ -61,7 +54,6 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
 
       if (insertError) throw insertError;
 
-      // Call Gemini edge function
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
           prompt: `You are Ulysses S. Grant, speaking in 1885 while writing your memoirs. A user has sent this message: ${text}. 
@@ -83,7 +75,6 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
         
         setMessages(prev => [...prev, assistantMessage]);
         
-        // Store assistant message
         await supabase
           .from('chat_messages')
           .insert({
@@ -99,39 +90,7 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
         variant: "destructive",
       });
     } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const toggleRecording = () => {
-    if (isRecording) {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-      setIsRecording(false);
-    } else {
-      try {
-        recognitionRef.current = startVoiceRecognition(
-          (text) => {
-            setInputMessage(text);
-            processMessage(text);
-          },
-          () => setIsRecording(false)
-        );
-        setIsRecording(true);
-        toast({
-          title: "Recording Started",
-          description: "Speak your message to General Grant",
-        });
-      } catch (error) {
-        console.error("Voice recognition error:", error);
-        toast({
-          title: "Error",
-          description: "Failed to start voice recording. Please check your microphone permissions.",
-          variant: "destructive",
-        });
-        setIsRecording(false);
-      }
+      setIsLoading(false);
     }
   };
 
@@ -148,12 +107,8 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
         <div ref={messagesEndRef} />
       </div>
       <ChatInput
-        inputMessage={inputMessage}
-        setInputMessage={setInputMessage}
-        sendMessage={() => processMessage(inputMessage)}
-        isRecording={isRecording}
-        toggleRecording={toggleRecording}
-        isProcessing={isProcessing}
+        sendMessage={handleSendMessage}
+        isLoading={isLoading}
       />
     </div>
   );
