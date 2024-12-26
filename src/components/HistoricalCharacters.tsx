@@ -46,7 +46,7 @@ export const HistoricalCharacters = () => {
       }
 
       const ELEVEN_LABS_API_KEY = secrets.key_value;
-      const VOICE_ID = "pqHfZKP75CvOlQylNhV4"; // Bill's voice ID, which sounds similar to JFK
+      const VOICE_ID = "ErXwobaYiN019PkySvjV"; // Updated to use the specified voice ID
       
       const response = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream/with-timestamps`,
