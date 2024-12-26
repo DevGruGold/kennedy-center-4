@@ -23,7 +23,7 @@ export const playWithElevenLabs = async (
     const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Chris's voice for JFK
     
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-with-timestamps`,
       {
         method: "POST",
         headers: {
@@ -104,7 +104,7 @@ export const playWithElevenLabs = async (
 
       console.log("Starting audio playback...");
       audio.play().catch((error) => {
-        console.error("Audio play error:", error);
+        console.error("Audio playback error:", error);
         cleanupResources();
         resolve(false);
       });
