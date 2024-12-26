@@ -104,10 +104,19 @@ export const KennedyChat = () => {
             role: 'assistant'
           });
 
-        // Play the response using ElevenLabs with word highlighting
-        await playWithElevenLabs(data.generatedText, (wordIndex) => {
-          setHighlightedWordIndex(wordIndex);
-        });
+        try {
+          // Play the response using ElevenLabs with word highlighting
+          await playWithElevenLabs(data.generatedText, (wordIndex) => {
+            setHighlightedWordIndex(wordIndex);
+          });
+        } catch (voiceError) {
+          console.error("Voice playback error:", voiceError);
+          toast({
+            title: "Voice Playback Error",
+            description: "Failed to play voice response. Please check your audio settings.",
+            variant: "destructive",
+          });
+        }
         
         // Reset highlight after playback
         setHighlightedWordIndex(-1);

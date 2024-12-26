@@ -10,7 +10,7 @@ interface VoiceSettings {
 export const playWithElevenLabs = async (
   text: string,
   onWordBoundary?: (wordIndex: number) => void
-) => {
+): Promise<void> => {
   try {
     const { data: secrets } = await supabase
       .from('secrets')
@@ -22,16 +22,16 @@ export const playWithElevenLabs = async (
       throw new Error("ElevenLabs API key not found");
     }
 
-    const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Chris's voice for JFK
+    const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // JFK voice ID
     const voiceSettings: VoiceSettings = {
       stability: 0.3,
       similarity_boost: 0.85,
       style: 1.0,
       use_speaker_boost: true
     };
-    
+
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream?optimize_streaming_latency=0`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-with-timestamps`,
       {
         method: "POST",
         headers: {
@@ -55,13 +55,13 @@ export const playWithElevenLabs = async (
     const audio = new Audio(audioUrl);
     
     return new Promise<void>((resolve) => {
-      let words = text.split(' ');
+      const words = text.split(' ');
       let currentWordIndex = 0;
       
       // Estimate word timing based on audio duration
       audio.onloadedmetadata = () => {
         const wordDuration = audio.duration / words.length;
-        let wordTimer = setInterval(() => {
+        const wordTimer = setInterval(() => {
           if (currentWordIndex < words.length) {
             onWordBoundary?.(currentWordIndex);
             currentWordIndex++;
@@ -76,7 +76,11 @@ export const playWithElevenLabs = async (
         resolve();
       };
 
-      audio.play();
+      audio.play().catch((error) => {
+        console.error("Audio playback error:", error);
+        URL.revokeObjectURL(audioUrl);
+        resolve();
+      });
     });
   } catch (error) {
     console.error("ElevenLabs error:", error);
