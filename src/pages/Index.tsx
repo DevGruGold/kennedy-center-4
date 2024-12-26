@@ -1,28 +1,37 @@
 import { Navigation } from "@/components/Navigation";
 import { ArtworkCard } from "@/components/ArtworkCard";
 import { HistoricalCharacters } from "@/components/HistoricalCharacters";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Artwork {
+  id: string;
+  title: string;
+  image_url: string;
+  creator: {
+    display_name: string | null;
+  } | null;
+}
 
 const Index = () => {
-  const featuredArtworks = [
-    {
-      title: "Digital Metamorphosis",
-      artist: "Elena Rivera",
-      imageUrl: "/placeholder.svg",
-      status: "Featured",
+  const { data: artworks } = useQuery({
+    queryKey: ['artworks'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('artworks')
+        .select(`
+          id,
+          title,
+          image_url,
+          creator:profiles(display_name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(6);
+
+      if (error) throw error;
+      return data as Artwork[];
     },
-    {
-      title: "Quantum Dreams",
-      artist: "Marcus Chen",
-      imageUrl: "/placeholder.svg",
-      status: "New",
-    },
-    {
-      title: "Virtual Horizons",
-      artist: "Sarah Johnson",
-      imageUrl: "/placeholder.svg",
-      status: "Featured",
-    },
-  ];
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -62,9 +71,18 @@ const Index = () => {
             Featured Digital Artworks
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {featuredArtworks.map((artwork, index) => (
-              <ArtworkCard key={index} {...artwork} />
-            ))}
+            {artworks && artworks.length > 0 ? (
+              artworks.map((artwork) => (
+                <ArtworkCard
+                  key={artwork.id}
+                  title={artwork.title}
+                  artist={artwork.creator?.display_name || "Anonymous"}
+                  imageUrl={artwork.image_url}
+                />
+              ))
+            ) : (
+              <p className="col-span-3 text-center text-gray-500">No artworks submitted yet</p>
+            )}
           </div>
         </section>
       </main>

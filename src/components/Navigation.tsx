@@ -2,21 +2,52 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 export const Navigation = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile', userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!userId,
+  });
 
   useEffect(() => {
-    const loginStatus = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loginStatus);
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+      setUserId(session?.user?.id || null);
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session);
+      setUserId(session?.user?.id || null);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("userEmail");
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setIsLoggedIn(false);
+    setUserId(null);
     toast({
       title: "Logged out",
       description: "You have been logged out successfully",
@@ -57,7 +88,7 @@ export const Navigation = () => {
                 onClick={() => navigate("/profile")}
                 className="text-primary hover:text-primary/80"
               >
-                Profile
+                {profile?.display_name || "My Profile"}
               </Button>
               <Button
                 variant="default"
