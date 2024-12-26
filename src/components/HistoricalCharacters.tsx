@@ -29,13 +29,19 @@ export const HistoricalCharacters = () => {
 
   const playWithElevenLabs = async (text: string) => {
     try {
-      const { data: secrets } = await supabase
+      const { data: secrets, error } = await supabase
         .from('secrets')
         .select('key_value')
         .eq('key_name', 'ELEVEN_LABS_API_KEY')
-        .single();
+        .maybeSingle();
       
+      if (error) {
+        console.error("Error fetching ElevenLabs API key:", error);
+        throw new Error("Failed to fetch ElevenLabs API key");
+      }
+
       if (!secrets?.key_value) {
+        console.error("ElevenLabs API key not found in secrets");
         throw new Error("ElevenLabs API key not found");
       }
 
