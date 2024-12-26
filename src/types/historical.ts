@@ -3,6 +3,7 @@ export interface Character {
   role: string;
   imageUrl: string;
   description: string;
+  voiceId: string;
   prompt: string;
 }
 
@@ -15,4 +16,8 @@ export interface CharacterCardProps {
   onPlay: (index: number) => void;
   onPause: () => void;
   onReset: () => void;
+}
+
+export interface ChatProps {
+  voiceId: string;
 }

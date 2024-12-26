@@ -1,23 +1,22 @@
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ChatMessage } from "./chat/ChatMessage";
-import { ChatInput } from "./chat/ChatInput";
-import { ChatHeader } from "./chat/ChatHeader";
+import { ChatMessage } from "../ChatMessage";
+import { ChatInput } from "../ChatInput";
+import { ChatHeader } from "../ChatHeader";
 import { startVoiceRecognition } from "@/utils/voiceUtils";
-import { playWithElevenLabs } from "@/utils/audioPlayback";
+import { ChatProps } from "@/types/historical";
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-export const KennedyChat = () => {
+export const CaesarChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [highlightedWordIndex, setHighlightedWordIndex] = useState(-1);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -80,9 +79,10 @@ export const KennedyChat = () => {
       // Call Gemini edge function
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
-          prompt: `You are President John F. Kennedy. A user has sent this message: ${text}. 
-                  Respond in your characteristic speaking style, focusing on your vision for the arts, 
-                  culture, and the Kennedy Center. Keep the response natural and engaging.`
+          prompt: `You are Julius Caesar. A user has sent this message: ${text}. 
+                  Respond in your characteristic speaking style, focusing on your experiences
+                  as a leader, your military campaigns, and your vision for Rome. Keep the
+                  response natural and engaging, maintaining your historical persona.`
         }
       });
 
@@ -103,25 +103,6 @@ export const KennedyChat = () => {
             content: data.generatedText,
             role: 'assistant'
           });
-
-        // Play audio with word highlighting
-        const handleWordBoundary = (index: number) => {
-          setHighlightedWordIndex(index);
-        };
-
-        try {
-          await playWithElevenLabs(data.generatedText, handleWordBoundary);
-        } catch (voiceError) {
-          console.error("Voice playback error:", voiceError);
-          toast({
-            title: "Voice Playback Error",
-            description: "Failed to play voice response. Please check your audio settings.",
-            variant: "destructive",
-          });
-        }
-        
-        // Reset highlight after playback
-        setHighlightedWordIndex(-1);
       }
     } catch (error) {
       console.error("Error in chat:", error);
@@ -153,7 +134,7 @@ export const KennedyChat = () => {
         setIsRecording(true);
         toast({
           title: "Recording Started",
-          description: "Speak your message to President Kennedy",
+          description: "Speak your message to Caesar",
         });
       } catch (error) {
         console.error("Voice recognition error:", error);
@@ -169,17 +150,12 @@ export const KennedyChat = () => {
 
   return (
     <div className="flex flex-col h-[600px] max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
-      <ChatHeader />
+      <ChatHeader title="Chat with Julius Caesar" />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <ChatMessage 
             key={index} 
             {...message} 
-            highlightedWordIndex={
-              message.role === 'assistant' && 
-              index === messages.length - 1 ? 
-              highlightedWordIndex : -1
-            }
           />
         ))}
         <div ref={messagesEndRef} />

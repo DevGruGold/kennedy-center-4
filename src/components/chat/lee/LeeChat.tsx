@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ChatMessage } from "./chat/ChatMessage";
-import { ChatInput } from "./chat/ChatInput";
-import { ChatHeader } from "./chat/ChatHeader";
+import { ChatMessage } from "../ChatMessage";
+import { ChatInput } from "../ChatInput";
+import { ChatHeader } from "../ChatHeader";
 import { startVoiceRecognition } from "@/utils/voiceUtils";
-import { playWithElevenLabs } from "@/utils/audioPlayback";
+import { ChatProps } from "@/types/historical";
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-export const LeeChat = () => {
+export const LeeChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);

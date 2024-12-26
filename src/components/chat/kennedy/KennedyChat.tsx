@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ChatMessage } from "./chat/ChatMessage";
-import { ChatInput } from "./chat/ChatInput";
-import { ChatHeader } from "./chat/ChatHeader";
+import { ChatMessage } from "../ChatMessage";
+import { ChatInput } from "../ChatInput";
+import { ChatHeader } from "../ChatHeader";
 import { startVoiceRecognition } from "@/utils/voiceUtils";
+import { ChatProps } from "@/types/historical";
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
-export const CaesarChat = () => {
+export const KennedyChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -78,10 +79,9 @@ export const CaesarChat = () => {
       // Call Gemini edge function
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
-          prompt: `You are Julius Caesar. A user has sent this message: ${text}. 
-                  Respond in your characteristic speaking style, focusing on your experiences
-                  as a leader, your military campaigns, and your vision for Rome. Keep the
-                  response natural and engaging, maintaining your historical persona.`
+          prompt: `You are President John F. Kennedy. A user has sent this message: ${text}. 
+                  Respond in your characteristic speaking style, focusing on your vision for the arts, 
+                  culture, and the Kennedy Center. Keep the response natural and engaging.`
         }
       });
 
@@ -133,7 +133,7 @@ export const CaesarChat = () => {
         setIsRecording(true);
         toast({
           title: "Recording Started",
-          description: "Speak your message to Caesar",
+          description: "Speak your message to President Kennedy",
         });
       } catch (error) {
         console.error("Voice recognition error:", error);
@@ -149,7 +149,7 @@ export const CaesarChat = () => {
 
   return (
     <div className="flex flex-col h-[600px] max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
-      <ChatHeader title="Chat with Julius Caesar" />
+      <ChatHeader title="Chat with President Kennedy" />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <ChatMessage 
