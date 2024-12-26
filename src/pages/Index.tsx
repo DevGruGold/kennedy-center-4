@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import KennedyPreviewSystem from "@/components/KennedyPreviewSystem";
 import { HistoricalCharacters } from "@/components/HistoricalCharacters";
 import { Building, Handshake, Award } from "lucide-react";
+import { KennedyChat } from "@/components/KennedyChat";
 
 const Index = () => {
   const featuredArtworks = [
@@ -137,6 +138,13 @@ const Index = () => {
 
         <section id="historical-characters" className="mb-16">
           <HistoricalCharacters />
+        </section>
+
+        <section className="mb-16">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-primary text-center mb-8">
+            Interactive Chat with President Kennedy
+          </h2>
+          <KennedyChat />
         </section>
 
         <section className="mb-16">
