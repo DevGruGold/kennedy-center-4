@@ -30,7 +30,12 @@ export const GrantChat = ({ voiceId }: ChatProps) => {
   }, [messages]);
 
   useEffect(() => {
-    loadChatHistory();
+    // Add initial greeting message
+    const initialMessage = {
+      role: 'assistant' as const,
+      content: "Good day, I am General Ulysses S. Grant. I'm here to share my experiences from the Civil War, my presidency, and my efforts to protect the rights of formerly enslaved people. What would you like to discuss about military strategy, leadership, or the challenges of Reconstruction?"
+    };
+    setMessages([initialMessage]);
   }, []);
 
   const loadChatHistory = async () => {

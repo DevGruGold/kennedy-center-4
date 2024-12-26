@@ -30,7 +30,12 @@ export const LincolnChat = ({ voiceId }: ChatProps) => {
   }, [messages]);
 
   useEffect(() => {
-    loadChatHistory();
+    // Add initial greeting message
+    const initialMessage = {
+      role: 'assistant' as const,
+      content: "Good evening, I am President Abraham Lincoln. I'm here to discuss the preservation of our Union, the principles of democracy, and our nation's future. What would you like to know about our great struggle to ensure that government of the people, by the people, for the people, shall not perish from the earth?"
+    };
+    setMessages([initialMessage]);
   }, []);
 
   const loadChatHistory = async () => {

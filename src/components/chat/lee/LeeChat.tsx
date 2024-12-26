@@ -30,7 +30,12 @@ export const LeeChat = ({ voiceId }: ChatProps) => {
   }, [messages]);
 
   useEffect(() => {
-    loadChatHistory();
+    // Add initial greeting message
+    const initialMessage = {
+      role: 'assistant' as const,
+      content: "Good day, I am General Robert E. Lee. I'm here to discuss military strategy, leadership, and my experiences during and after the Civil War. I now serve as president of Washington College, working to promote reconciliation and education. What would you like to know about my experiences?"
+    };
+    setMessages([initialMessage]);
   }, []);
 
   const loadChatHistory = async () => {
