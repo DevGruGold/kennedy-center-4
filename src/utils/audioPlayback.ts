@@ -23,21 +23,20 @@ export const playWithElevenLabs = async (
     const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Chris's voice for JFK
     
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-with-timestamps`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "xi-api-key": secrets.key_value,
-          "Accept": "audio/mpeg",
         },
         body: JSON.stringify({
           text,
           model_id: "eleven_monolingual_v1",
           voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
-            style: 0.5,
+            stability: 0.3,
+            similarity_boost: 0.85,
+            style: 1.0,
             use_speaker_boost: true
           },
         }),
@@ -45,12 +44,8 @@ export const playWithElevenLabs = async (
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("ElevenLabs API error:", response.status, errorText);
-      throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
+      throw new Error(`ElevenLabs API error: ${response.statusText}`);
     }
-
-    console.log("Successfully received audio stream from ElevenLabs");
 
     const audioBlob = await response.blob();
     const audioUrl = URL.createObjectURL(audioBlob);
