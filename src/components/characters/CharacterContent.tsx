@@ -7,6 +7,7 @@ import { GrantChat } from "../chat/grant/GrantChat";
 import { LeeChat } from "../chat/lee/LeeChat";
 import { LincolnChat } from "../chat/lincoln/LincolnChat";
 import { WashingtonChat } from "../chat/washington/WashingtonChat";
+import { MLKChat } from "../chat/mlk/MLKChat";
 
 interface CharacterContentProps {
   character: Character;
@@ -36,6 +37,8 @@ export const CharacterContent = ({
         return <LeeChat voiceId={character.voiceId} />;
       case 'abrahamlincoln':
         return <LincolnChat voiceId={character.voiceId} />;
+      case 'martinlutherkingjr':
+        return <MLKChat voiceId={character.voiceId} />;
       default:
         return null;
     }
