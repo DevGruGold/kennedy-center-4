@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "./chat/ChatMessage";
 import { ChatInput } from "./chat/ChatInput";
 import { ChatHeader } from "./chat/ChatHeader";
+import { startVoiceRecognition, playWithElevenLabs } from "@/utils/voiceUtils";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -14,8 +15,10 @@ export const KennedyChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -49,23 +52,24 @@ export const KennedyChat = () => {
     }
   };
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+  const processMessage = async (text: string) => {
+    if (!text.trim()) return;
+    setIsProcessing(true);
 
     const newMessage = {
       role: 'user' as const,
-      content: inputMessage
+      content: text
     };
 
     setMessages(prev => [...prev, newMessage]);
     setInputMessage("");
 
     try {
-      // Store user message in Supabase
+      // Store user message
       const { error: insertError } = await supabase
         .from('chat_messages')
         .insert({
-          content: inputMessage,
+          content: text,
           role: 'user'
         });
 
@@ -74,7 +78,7 @@ export const KennedyChat = () => {
       // Call Gemini edge function
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
-          prompt: `You are President John F. Kennedy. A user has sent this message: ${inputMessage}. 
+          prompt: `You are President John F. Kennedy. A user has sent this message: ${text}. 
                   Respond in your characteristic speaking style, focusing on your vision for the arts, 
                   culture, and the Kennedy Center. Keep the response natural and engaging.`
         }
@@ -90,13 +94,16 @@ export const KennedyChat = () => {
         
         setMessages(prev => [...prev, assistantMessage]);
         
-        // Store assistant message in Supabase
+        // Store assistant message
         await supabase
           .from('chat_messages')
           .insert({
             content: data.generatedText,
             role: 'assistant'
           });
+
+        // Play the response using ElevenLabs
+        await playWithElevenLabs(data.generatedText);
       }
     } catch (error) {
       console.error("Error in chat:", error);
@@ -105,12 +112,41 @@ export const KennedyChat = () => {
         description: "Failed to process message",
         variant: "destructive",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const toggleRecording = () => {
-    setIsRecording(!isRecording);
-    // Voice recording implementation will be added in the next iteration
+    if (isRecording) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      setIsRecording(false);
+    } else {
+      try {
+        recognitionRef.current = startVoiceRecognition(
+          (text) => {
+            setInputMessage(text);
+            processMessage(text);
+          },
+          () => setIsRecording(false)
+        );
+        setIsRecording(true);
+        toast({
+          title: "Recording Started",
+          description: "Speak your message to President Kennedy",
+        });
+      } catch (error) {
+        console.error("Voice recognition error:", error);
+        toast({
+          title: "Error",
+          description: "Failed to start voice recording. Please check your microphone permissions.",
+          variant: "destructive",
+        });
+        setIsRecording(false);
+      }
+    }
   };
 
   return (
@@ -127,9 +163,10 @@ export const KennedyChat = () => {
       <ChatInput
         inputMessage={inputMessage}
         setInputMessage={setInputMessage}
-        sendMessage={sendMessage}
+        sendMessage={() => processMessage(inputMessage)}
         isRecording={isRecording}
         toggleRecording={toggleRecording}
+        isProcessing={isProcessing}
       />
     </div>
   );
