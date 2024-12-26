@@ -38,7 +38,7 @@ export const CharacterContent = ({
         return <LeeChat voiceId={character.voiceId} />;
       case 'abrahamlincoln':
         return <LincolnChat voiceId={character.voiceId} />;
-      case 'martinlutherkingjr':
+      case 'martinlutherkingjr.':
         return <MLKChat voiceId={character.voiceId} />;
       case 'frederickdouglass':
         return <DouglassChat voiceId={character.voiceId} />;
