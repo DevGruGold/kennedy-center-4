@@ -49,35 +49,48 @@ export const playWithElevenLabs = async (
     return new Promise<boolean>((resolve) => {
       const words = text.split(' ');
       let currentWordIndex = 0;
+      let wordTimer: NodeJS.Timeout | null = null;
       
       audio.onloadedmetadata = () => {
         if (onWordBoundary) {
           const wordDuration = audio.duration / words.length;
-          const wordTimer = setInterval(() => {
+          wordTimer = setInterval(() => {
             if (currentWordIndex < words.length) {
               onWordBoundary(currentWordIndex);
               currentWordIndex++;
             } else {
-              clearInterval(wordTimer);
+              if (wordTimer) {
+                clearInterval(wordTimer);
+              }
             }
           }, wordDuration * 1000);
-
-          audio.onended = () => {
-            clearInterval(wordTimer);
-            onWordBoundary(-1); // Reset highlighting
-            URL.revokeObjectURL(audioUrl);
-            resolve(true);
-          };
         }
       };
 
+      audio.onended = () => {
+        if (wordTimer) {
+          clearInterval(wordTimer);
+        }
+        if (onWordBoundary) {
+          onWordBoundary(-1); // Reset highlighting
+        }
+        URL.revokeObjectURL(audioUrl);
+        resolve(true);
+      };
+
       audio.onerror = () => {
+        if (wordTimer) {
+          clearInterval(wordTimer);
+        }
         console.error("Audio playback error");
         URL.revokeObjectURL(audioUrl);
         resolve(false);
       };
 
       audio.play().catch((error) => {
+        if (wordTimer) {
+          clearInterval(wordTimer);
+        }
         console.error("Audio playback error:", error);
         URL.revokeObjectURL(audioUrl);
         resolve(false);
