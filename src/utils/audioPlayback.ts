@@ -5,6 +5,8 @@ export const playWithElevenLabs = async (
   onWordBoundary?: (wordIndex: number) => void
 ): Promise<boolean> => {
   try {
+    console.log("Starting ElevenLabs TTS process...");
+    
     const { data: secrets } = await supabase
       .from('secrets')
       .select('key_value')
@@ -16,25 +18,26 @@ export const playWithElevenLabs = async (
       throw new Error("ElevenLabs API key not found");
     }
 
-    console.log("Attempting TTS with ElevenLabs...");
+    console.log("Retrieved API key from Supabase, initiating TTS request...");
     
     const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Chris's voice for JFK
     
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream-with-timestamps`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "xi-api-key": secrets.key_value,
+          "Accept": "audio/mpeg",
         },
         body: JSON.stringify({
           text,
           model_id: "eleven_monolingual_v1",
           voice_settings: {
-            stability: 0.3,
-            similarity_boost: 0.85,
-            style: 1.0,
+            stability: 0.5,
+            similarity_boost: 0.75,
+            style: 0.5,
             use_speaker_boost: true
           },
         }),
@@ -42,9 +45,12 @@ export const playWithElevenLabs = async (
     );
 
     if (!response.ok) {
-      console.error(`ElevenLabs API error: ${response.status} ${response.statusText}`);
-      throw new Error(`ElevenLabs API error: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error("ElevenLabs API error:", response.status, errorText);
+      throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
     }
+
+    console.log("Successfully received audio stream from ElevenLabs");
 
     const audioBlob = await response.blob();
     const audioUrl = URL.createObjectURL(audioBlob);
@@ -69,8 +75,7 @@ export const playWithElevenLabs = async (
       audio.onloadedmetadata = () => {
         console.log("Audio loaded, duration:", audio.duration);
         if (onWordBoundary) {
-          // Calculate word duration based on average speaking rate
-          const averageWordsPerMinute = 150;
+          const averageWordsPerMinute = 130; // Adjusted for more natural timing
           const wordDuration = (60 / averageWordsPerMinute);
           
           wordTimer = setInterval(() => {
@@ -97,6 +102,7 @@ export const playWithElevenLabs = async (
         resolve(false);
       };
 
+      console.log("Starting audio playback...");
       audio.play().catch((error) => {
         console.error("Audio play error:", error);
         cleanupResources();
