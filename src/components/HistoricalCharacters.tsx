@@ -27,7 +27,7 @@ const characters: Character[] = [
   {
     name: "Robert E. Lee",
     role: "Confederate General",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Robert_Edward_Lee.jpg/800px-Robert_Edward_Lee.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Robert_E_Lee_in_1863.png/800px-Robert_E_Lee_in_1863.png",
     description: "Discuss military strategy, leadership, and historical perspectives with the renowned Civil War general.",
     voiceId: "pqHfZKP75CvOlQylNhV4",
     prompt: "Share your insights on military leadership, strategy, and your experiences during and after the Civil War. Keep your responses dignified and formal, reflecting your 19th-century military background."
