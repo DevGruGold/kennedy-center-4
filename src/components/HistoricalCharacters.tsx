@@ -46,10 +46,11 @@ export const HistoricalCharacters = () => {
       }
 
       const ELEVEN_LABS_API_KEY = secrets.key_value;
-      const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Updated to use Chris's voice
+      const VOICE_ID = "iP95p4xoKVk53GoZ742B"; // Using Chris's voice
       
+      console.log("Making request to ElevenLabs API...");
       const response = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream/with-timestamps`,
+        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}/stream/with-timestamps?optimize_streaming_latency=0`,
         {
           method: "POST",
           headers: {
@@ -63,13 +64,18 @@ export const HistoricalCharacters = () => {
               stability: 0.5,
               similarity_boost: 0.75,
             },
-            optimize_streaming_latency: 0,
           }),
         }
       );
 
-      if (!response.ok) throw new Error("Failed to generate speech");
+      if (!response.ok) {
+        console.error("ElevenLabs API error:", response.status, response.statusText);
+        const errorText = await response.text();
+        console.error("Error details:", errorText);
+        throw new Error(`Failed to generate speech: ${response.statusText}`);
+      }
 
+      console.log("Successfully received audio response");
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
