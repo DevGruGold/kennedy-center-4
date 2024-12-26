@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { RickRollNFTCase } from "@/components/explore/RickRollNFTCase";
 
 const Explore = () => {
   const { toast } = useToast();
@@ -142,6 +143,8 @@ const Explore = () => {
             ></iframe>
           </div>
         </section>
+
+        <RickRollNFTCase />
 
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-12">Platform Features</h2>
