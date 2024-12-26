@@ -5,6 +5,7 @@ import { KennedyChat } from "./chat/kennedy/KennedyChat";
 import { GrantChat } from "./chat/grant/GrantChat";
 import { LeeChat } from "./chat/lee/LeeChat";
 import { LincolnChat } from "./chat/lincoln/LincolnChat";
+import { WashingtonChat } from "./chat/washington/WashingtonChat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const characters: Character[] = [
@@ -15,6 +16,14 @@ const characters: Character[] = [
     description: "Experience an AI simulation of President Kennedy discussing his vision for the arts and the Kennedy Center.",
     voiceId: "iP95p4xoKVk53GoZ742B",
     prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Emphasize your belief in the power of arts to inspire and unite the nation. Keep your response natural and conversational, focusing on your passion for cultural advancement and the legacy you hope to leave through the Kennedy Center."
+  },
+  {
+    name: "George Washington",
+    role: "1st U.S. President",
+    imageUrl: "https://storage.googleapis.com/pai-images/ae3e0b6cebf04cf0a9c6c5e1338eee66.jpeg",
+    description: "Engage with the founding father on the importance of cultural institutions in building a strong national identity.",
+    voiceId: "pNInz6obpgDQGcFmaJgB",
+    prompt: "Share your perspective on how cultural institutions like the Kennedy Center embody the foundational principles of our nation. Discuss how the arts and culture contribute to building a unified national identity while preserving individual liberty. Draw from your experience as the first president to emphasize the importance of cultural development in maintaining a strong republic."
   },
   {
     name: "Ulysses S. Grant",
@@ -71,9 +80,12 @@ export const HistoricalCharacters = () => {
         
         <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
           <Tabs defaultValue="kennedy" className="w-full" onValueChange={setActiveCharacter}>
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1 mb-8">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1 mb-8">
               <TabsTrigger value="kennedy" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
                 John F. Kennedy
+              </TabsTrigger>
+              <TabsTrigger value="washington" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+                George Washington
               </TabsTrigger>
               <TabsTrigger value="grant" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
                 Ulysses S. Grant
@@ -103,8 +115,8 @@ export const HistoricalCharacters = () => {
                   </div>
                 </div>
               </TabsContent>
-              
-              <TabsContent value="grant">
+
+              <TabsContent value="washington">
                 <div className="grid md:grid-cols-2 gap-8 items-start">
                   <div>
                     <img
@@ -116,12 +128,12 @@ export const HistoricalCharacters = () => {
                     <p className="text-gray-600 text-center">{characters[1].description}</p>
                   </div>
                   <div className="h-full">
-                    <GrantChat voiceId={characters[1].voiceId} key={activeCharacter} />
+                    <WashingtonChat voiceId={characters[1].voiceId} key={activeCharacter} />
                   </div>
                 </div>
               </TabsContent>
               
-              <TabsContent value="lee">
+              <TabsContent value="grant">
                 <div className="grid md:grid-cols-2 gap-8 items-start">
                   <div>
                     <img
@@ -133,12 +145,12 @@ export const HistoricalCharacters = () => {
                     <p className="text-gray-600 text-center">{characters[2].description}</p>
                   </div>
                   <div className="h-full">
-                    <LeeChat voiceId={characters[2].voiceId} key={activeCharacter} />
+                    <GrantChat voiceId={characters[2].voiceId} key={activeCharacter} />
                   </div>
                 </div>
               </TabsContent>
               
-              <TabsContent value="lincoln">
+              <TabsContent value="lee">
                 <div className="grid md:grid-cols-2 gap-8 items-start">
                   <div>
                     <img
@@ -150,7 +162,24 @@ export const HistoricalCharacters = () => {
                     <p className="text-gray-600 text-center">{characters[3].description}</p>
                   </div>
                   <div className="h-full">
-                    <LincolnChat voiceId={characters[3].voiceId} key={activeCharacter} />
+                    <LeeChat voiceId={characters[3].voiceId} key={activeCharacter} />
+                  </div>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="lincoln">
+                <div className="grid md:grid-cols-2 gap-8 items-start">
+                  <div>
+                    <img
+                      src={characters[4].imageUrl}
+                      alt={characters[4].name}
+                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
+                    />
+                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[4].name}</h3>
+                    <p className="text-gray-600 text-center">{characters[4].description}</p>
+                  </div>
+                  <div className="h-full">
+                    <LincolnChat voiceId={characters[4].voiceId} key={activeCharacter} />
                   </div>
                 </div>
               </TabsContent>
