@@ -63,7 +63,7 @@ export const Navigation = () => {
             onClick={() => navigate("/")}
             className="font-heading text-2xl font-bold text-primary cursor-pointer"
           >
-            Smithsonian Museums
+            Kennedy Center
           </h1>
         </div>
         <div className="flex items-center space-x-4">

@@ -80,11 +80,11 @@ const Index = () => {
         <section className="py-12 md:py-16 bg-white rounded-lg shadow-sm mb-16">
           <div className="text-center">
             <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary mb-4">
-              In Partnership with the Smithsonian
+              In Partnership with Leading Cultural Institutions
             </h2>
             <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
-              A groundbreaking collaboration between the Kennedy Center and the Smithsonian Institution,
-              bringing together arts and innovation.
+              A groundbreaking initiative by the Kennedy Center,
+              bringing together arts and innovation through strategic partnerships.
             </p>
           </div>
         </section>
