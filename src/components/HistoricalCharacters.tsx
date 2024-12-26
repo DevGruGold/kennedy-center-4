@@ -71,11 +71,19 @@ export const HistoricalCharacters = () => {
       
       <div className="max-w-2xl mx-auto">
         <Tabs defaultValue="kennedy" className="w-full" onValueChange={setActiveCharacter}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="kennedy">John F. Kennedy</TabsTrigger>
-            <TabsTrigger value="grant">Ulysses S. Grant</TabsTrigger>
-            <TabsTrigger value="lee">Robert E. Lee</TabsTrigger>
-            <TabsTrigger value="lincoln">Abraham Lincoln</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 gap-1">
+            <TabsTrigger value="kennedy" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+              John F. Kennedy
+            </TabsTrigger>
+            <TabsTrigger value="grant" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+              Ulysses S. Grant
+            </TabsTrigger>
+            <TabsTrigger value="lee" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+              Robert E. Lee
+            </TabsTrigger>
+            <TabsTrigger value="lincoln" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
+              Abraham Lincoln
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="kennedy">
             <div className="mb-8">
