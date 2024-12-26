@@ -17,7 +17,6 @@ export const LeeChat = ({ voiceId }: ChatProps) => {
   const [inputMessage, setInputMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [highlightedWordIndex, setHighlightedWordIndex] = useState(-1);
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
@@ -107,25 +106,6 @@ export const LeeChat = ({ voiceId }: ChatProps) => {
             content: data.generatedText,
             role: 'assistant'
           });
-
-        // Play audio with word highlighting
-        const handleWordBoundary = (index: number) => {
-          setHighlightedWordIndex(index);
-        };
-
-        try {
-          await playWithElevenLabs(data.generatedText, handleWordBoundary);
-        } catch (voiceError) {
-          console.error("Voice playback error:", voiceError);
-          toast({
-            title: "Voice Playback Error",
-            description: "Failed to play voice response. Please check your audio settings.",
-            variant: "destructive",
-          });
-        }
-        
-        // Reset highlight after playback
-        setHighlightedWordIndex(-1);
       }
     } catch (error) {
       console.error("Error in chat:", error);
@@ -179,11 +159,6 @@ export const LeeChat = ({ voiceId }: ChatProps) => {
           <ChatMessage 
             key={index} 
             {...message} 
-            highlightedWordIndex={
-              message.role === 'assistant' && 
-              index === messages.length - 1 ? 
-              highlightedWordIndex : -1
-            }
           />
         ))}
         <div ref={messagesEndRef} />

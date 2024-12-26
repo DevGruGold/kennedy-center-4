@@ -12,7 +12,7 @@ interface Message {
   content: string;
 }
 
-export const CaesarChat = ({ voiceId }: ChatProps) => {
+export const GrantChat = ({ voiceId }: ChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isRecording, setIsRecording] = useState(false);
@@ -79,10 +79,12 @@ export const CaesarChat = ({ voiceId }: ChatProps) => {
       // Call Gemini edge function
       const { data, error } = await supabase.functions.invoke('generate-with-gemini', {
         body: { 
-          prompt: `You are Julius Caesar. A user has sent this message: ${text}. 
-                  Respond in your characteristic speaking style, focusing on your experiences
-                  as a leader, your military campaigns, and your vision for Rome. Keep the
-                  response natural and engaging, maintaining your historical persona.`
+          prompt: `You are Ulysses S. Grant, speaking in 1885 while writing your memoirs. A user has sent this message: ${text}. 
+                  Respond in your characteristic speaking style, focusing on your experiences as Union General during the Civil War,
+                  your presidency, and your efforts to protect the rights of formerly enslaved people. Keep your responses direct 
+                  and straightforward, reflecting your reputation for clear communication and determination. Share insights about 
+                  military strategy, leadership, and the challenges of Reconstruction. Maintain historical accuracy while engaging 
+                  naturally with the user's questions.`
         }
       });
 
@@ -134,7 +136,7 @@ export const CaesarChat = ({ voiceId }: ChatProps) => {
         setIsRecording(true);
         toast({
           title: "Recording Started",
-          description: "Speak your message to Caesar",
+          description: "Speak your message to General Grant",
         });
       } catch (error) {
         console.error("Voice recognition error:", error);
@@ -150,7 +152,7 @@ export const CaesarChat = ({ voiceId }: ChatProps) => {
 
   return (
     <div className="flex flex-col h-[600px] max-w-2xl mx-auto bg-white rounded-lg shadow-lg">
-      <ChatHeader title="Chat with Julius Caesar" />
+      <ChatHeader title="Chat with General Grant" />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <ChatMessage 

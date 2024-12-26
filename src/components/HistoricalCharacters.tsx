@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Character } from "@/types/historical";
 import { KennedyChat } from "./chat/kennedy/KennedyChat";
-import { CaesarChat } from "./chat/caesar/CaesarChat";
+import { GrantChat } from "./chat/grant/GrantChat";
 import { LeeChat } from "./chat/lee/LeeChat";
 import { LincolnChat } from "./chat/lincoln/LincolnChat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,12 +17,12 @@ const characters: Character[] = [
     prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Keep your response natural and conversational, focusing on your passion for cultural advancement."
   },
   {
-    name: "Julius Caesar",
-    role: "Roman Emperor",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Julius_Caesar_%28100-44_BC%29.JPG/800px-Julius_Caesar_%28100-44_BC%29.JPG",
-    description: "Engage with the legendary Roman leader on topics of leadership, conquest, and Roman culture.",
+    name: "Ulysses S. Grant",
+    role: "18th U.S. President",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Ulysses_S_Grant_by_Brady_c1870-restored.jpg/800px-Ulysses_S_Grant_by_Brady_c1870-restored.jpg",
+    description: "Engage with the Civil War general and president on topics of military strategy, leadership, and Reconstruction.",
     voiceId: "N2lVS1w4EtoT3dr4eOWO",
-    prompt: "Share your insights on leadership, the Roman Empire, and your military conquests. Keep your responses natural and engaging, focusing on your experiences as a leader."
+    prompt: "Share your insights on military leadership, the Civil War, and your presidency. Keep your responses direct and clear, focusing on your experiences as both a general and president."
   },
   {
     name: "Robert E. Lee",
@@ -73,7 +73,7 @@ export const HistoricalCharacters = () => {
         <Tabs defaultValue="kennedy" className="w-full" onValueChange={setActiveCharacter}>
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="kennedy">John F. Kennedy</TabsTrigger>
-            <TabsTrigger value="caesar">Julius Caesar</TabsTrigger>
+            <TabsTrigger value="grant">Ulysses S. Grant</TabsTrigger>
             <TabsTrigger value="lee">Robert E. Lee</TabsTrigger>
             <TabsTrigger value="lincoln">Abraham Lincoln</TabsTrigger>
           </TabsList>
@@ -89,7 +89,7 @@ export const HistoricalCharacters = () => {
             </div>
             <KennedyChat voiceId={characters[0].voiceId} />
           </TabsContent>
-          <TabsContent value="caesar">
+          <TabsContent value="grant">
             <div className="mb-8">
               <img
                 src={characters[1].imageUrl}
@@ -99,7 +99,7 @@ export const HistoricalCharacters = () => {
               <h3 className="text-xl font-semibold text-center mb-2">{characters[1].name}</h3>
               <p className="text-gray-600 text-center">{characters[1].description}</p>
             </div>
-            <CaesarChat voiceId={characters[1].voiceId} />
+            <GrantChat voiceId={characters[1].voiceId} />
           </TabsContent>
           <TabsContent value="lee">
             <div className="mb-8">
