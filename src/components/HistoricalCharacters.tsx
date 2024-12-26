@@ -1,16 +1,13 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Character } from "@/types/historical";
-import { KennedyChat } from "./chat/kennedy/KennedyChat";
-import { GrantChat } from "./chat/grant/GrantChat";
-import { LeeChat } from "./chat/lee/LeeChat";
-import { LincolnChat } from "./chat/lincoln/LincolnChat";
-import { WashingtonChat } from "./chat/washington/WashingtonChat";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
+import { CharacterTabs } from "./characters/CharacterTabs";
+import { CharacterContent } from "./characters/CharacterContent";
 
 const characters: Character[] = [
   {
-    name: "John F. Kennedy",
+    name: "John F Kennedy",
     role: "35th U.S. President",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/John_F._Kennedy%2C_White_House_color_photo_portrait.jpg/800px-John_F._Kennedy%2C_White_House_color_photo_portrait.jpg",
     description: "Experience an AI simulation of President Kennedy discussing his vision for the arts and the Kennedy Center.",
@@ -26,7 +23,7 @@ const characters: Character[] = [
     prompt: "Share your perspective on how cultural institutions like the Kennedy Center embody the foundational principles of our nation. Discuss how the arts and culture contribute to building a unified national identity while preserving individual liberty. Draw from your experience as the first president to emphasize the importance of cultural development in maintaining a strong republic."
   },
   {
-    name: "Ulysses S. Grant",
+    name: "Ulysses S Grant",
     role: "18th U.S. President",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Ulysses_S_Grant_by_Brady_c1870-restored.jpg/800px-Ulysses_S_Grant_by_Brady_c1870-restored.jpg",
     description: "Engage with the Civil War general and president on topics of military strategy, leadership, and cultural unity.",
@@ -34,7 +31,7 @@ const characters: Character[] = [
     prompt: "Share your perspective on how cultural institutions like the Kennedy Center represent the unity we fought to preserve during the Civil War. Reflect on how the arts can heal national divisions, drawing parallels to post-Civil War reconciliation. Keep your responses direct and clear, emphasizing the importance of cultural institutions in strengthening national bonds."
   },
   {
-    name: "Robert E. Lee",
+    name: "Robert E Lee",
     role: "Confederate General",
     imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Robert_E_Lee_in_1863.png/800px-Robert_E_Lee_in_1863.png",
     description: "Discuss leadership, reconciliation, and the role of cultural institutions in national healing.",
@@ -53,7 +50,9 @@ const characters: Character[] = [
 
 export const HistoricalCharacters = () => {
   const { toast } = useToast();
-  const [activeCharacter, setActiveCharacter] = useState("kennedy");
+  const [activeCharacter, setActiveCharacter] = useState("johnfkennedy");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [generatedText, setGeneratedText] = useState("");
 
   useEffect(() => {
     toast({
@@ -62,6 +61,11 @@ export const HistoricalCharacters = () => {
       variant: "default",
     });
   }, [toast]);
+
+  const handlePlaybackComplete = () => {
+    setIsPlaying(false);
+    setGeneratedText("");
+  };
 
   return (
     <div className="py-12 px-4 md:px-8">
@@ -79,110 +83,22 @@ export const HistoricalCharacters = () => {
         </div>
         
         <div className="bg-white rounded-xl shadow-xl p-6 md:p-8">
-          <Tabs defaultValue="kennedy" className="w-full" onValueChange={setActiveCharacter}>
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1 mb-8">
-              <TabsTrigger value="kennedy" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-                John F. Kennedy
-              </TabsTrigger>
-              <TabsTrigger value="washington" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-                George Washington
-              </TabsTrigger>
-              <TabsTrigger value="grant" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-                Ulysses S. Grant
-              </TabsTrigger>
-              <TabsTrigger value="lee" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-                Robert E. Lee
-              </TabsTrigger>
-              <TabsTrigger value="lincoln" className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4">
-                Abraham Lincoln
-              </TabsTrigger>
-            </TabsList>
-
+          <Tabs 
+            defaultValue="johnfkennedy" 
+            className="w-full" 
+            onValueChange={setActiveCharacter}
+          >
+            <CharacterTabs characters={characters} />
             <div className="mt-8">
-              <TabsContent value="kennedy">
-                <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div>
-                    <img
-                      src={characters[0].imageUrl}
-                      alt={characters[0].name}
-                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
-                    />
-                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[0].name}</h3>
-                    <p className="text-gray-600 text-center">{characters[0].description}</p>
-                  </div>
-                  <div className="h-full">
-                    <KennedyChat voiceId={characters[0].voiceId} key={activeCharacter} />
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="washington">
-                <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div>
-                    <img
-                      src={characters[1].imageUrl}
-                      alt={characters[1].name}
-                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
-                    />
-                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[1].name}</h3>
-                    <p className="text-gray-600 text-center">{characters[1].description}</p>
-                  </div>
-                  <div className="h-full">
-                    <WashingtonChat voiceId={characters[1].voiceId} key={activeCharacter} />
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="grant">
-                <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div>
-                    <img
-                      src={characters[2].imageUrl}
-                      alt={characters[2].name}
-                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
-                    />
-                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[2].name}</h3>
-                    <p className="text-gray-600 text-center">{characters[2].description}</p>
-                  </div>
-                  <div className="h-full">
-                    <GrantChat voiceId={characters[2].voiceId} key={activeCharacter} />
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="lee">
-                <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div>
-                    <img
-                      src={characters[3].imageUrl}
-                      alt={characters[3].name}
-                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
-                    />
-                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[3].name}</h3>
-                    <p className="text-gray-600 text-center">{characters[3].description}</p>
-                  </div>
-                  <div className="h-full">
-                    <LeeChat voiceId={characters[3].voiceId} key={activeCharacter} />
-                  </div>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="lincoln">
-                <div className="grid md:grid-cols-2 gap-8 items-start">
-                  <div>
-                    <img
-                      src={characters[4].imageUrl}
-                      alt={characters[4].name}
-                      className="w-full aspect-square object-cover rounded-lg shadow-lg mb-4"
-                    />
-                    <h3 className="text-2xl font-semibold text-center mb-2">{characters[4].name}</h3>
-                    <p className="text-gray-600 text-center">{characters[4].description}</p>
-                  </div>
-                  <div className="h-full">
-                    <LincolnChat voiceId={characters[4].voiceId} key={activeCharacter} />
-                  </div>
-                </div>
-              </TabsContent>
+              {characters.map((character) => (
+                <CharacterContent
+                  key={character.name.toLowerCase().replace(/\s+/g, '')}
+                  character={character}
+                  isPlaying={isPlaying}
+                  generatedText={generatedText}
+                  onPlaybackComplete={handlePlaybackComplete}
+                />
+              ))}
             </div>
           </Tabs>
         </div>
