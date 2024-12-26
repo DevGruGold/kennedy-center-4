@@ -7,12 +7,14 @@ interface CharacterTabsProps {
 
 export const CharacterTabs = ({ characters }: CharacterTabsProps) => {
   return (
-    <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-1 mb-8">
+    <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 bg-gray-100/50 p-1 rounded-lg">
       {characters.map((character) => (
         <TabsTrigger
           key={character.name.toLowerCase().replace(/\s+/g, '')}
           value={character.name.toLowerCase().replace(/\s+/g, '')}
-          className="text-xs md:text-sm whitespace-nowrap overflow-hidden text-ellipsis px-2 md:px-4"
+          className="data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm 
+            px-3 py-2 text-sm font-medium transition-all hover:bg-white/50 
+            whitespace-nowrap overflow-hidden text-ellipsis"
         >
           {character.name}
         </TabsTrigger>
