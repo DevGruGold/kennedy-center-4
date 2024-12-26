@@ -25,7 +25,7 @@ const Index = () => {
           title,
           image_url,
           creator_id,
-          profile:profiles!creator_id(display_name)
+          profile:profiles(display_name)
         `)
         .order('created_at', { ascending: false })
         .limit(6);
@@ -40,39 +40,65 @@ const Index = () => {
       <Navigation />
       
       <main className="container mx-auto px-4">
-        {/* Header Section */}
-        <section className="py-12 text-center">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary mb-4 animate-fade-in">
-            Kennedy Center Digital Arts
-          </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8 animate-fade-in">
-            Experience groundbreaking AI technology bringing history to life through interactive conversations with legendary figures.
-          </p>
-        </section>
-
-        <section className="mb-16">
-          <HistoricalCharacters />
-        </section>
-
-        <section className="py-16 bg-white rounded-lg shadow-sm mb-16">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="font-heading text-3xl font-bold text-primary mb-4">
-                In Partnership with the Smithsonian
-              </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                A groundbreaking collaboration between the Kennedy Center and the Smithsonian Institution,
-                bringing together arts and innovation.
+        {/* Hero Section with Chat */}
+        <section className="py-8 md:py-12">
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="text-center md:text-left">
+              <h1 className="font-heading text-3xl md:text-5xl font-bold text-primary mb-4 animate-fade-in">
+                Kennedy Center Digital Arts
+              </h1>
+              <p className="text-base md:text-lg text-gray-600 max-w-xl mx-auto md:mx-0 mb-6 animate-fade-in">
+                Experience groundbreaking AI technology bringing history to life through interactive conversations with legendary figures.
               </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                <button 
+                  onClick={() => document.getElementById('chat-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Start Chatting
+                </button>
+                <button 
+                  onClick={() => document.getElementById('artworks-section')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-secondary text-primary px-6 py-3 rounded-lg hover:bg-secondary/90 transition-colors"
+                >
+                  View Artworks
+                </button>
+              </div>
+            </div>
+            <div className="hidden md:block">
+              <img 
+                src="/placeholder.svg" 
+                alt="Kennedy Center Digital Arts"
+                className="w-full max-w-lg mx-auto rounded-lg shadow-lg"
+              />
             </div>
           </div>
         </section>
 
-        <section className="mb-16">
+        {/* Chat Section */}
+        <section id="chat-section" className="mb-16">
+          <HistoricalCharacters />
+        </section>
+
+        {/* Partnership Section */}
+        <section className="py-12 md:py-16 bg-white rounded-lg shadow-sm mb-16">
+          <div className="text-center">
+            <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary mb-4">
+              In Partnership with the Smithsonian
+            </h2>
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+              A groundbreaking collaboration between the Kennedy Center and the Smithsonian Institution,
+              bringing together arts and innovation.
+            </p>
+          </div>
+        </section>
+
+        {/* Artworks Section */}
+        <section id="artworks-section" className="mb-16">
           <h2 className="font-heading text-2xl md:text-3xl font-bold text-primary mb-8 text-center">
             Featured Digital Artworks
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {artworks && artworks.length > 0 ? (
               artworks.map((artwork) => (
                 <ArtworkCard
@@ -83,7 +109,7 @@ const Index = () => {
                 />
               ))
             ) : (
-              <p className="col-span-3 text-center text-gray-500">No artworks submitted yet</p>
+              <p className="col-span-full text-center text-gray-500">No artworks submitted yet</p>
             )}
           </div>
         </section>
