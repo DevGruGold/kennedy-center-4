@@ -1,14 +1,36 @@
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { generateWithGemini } from "@/utils/textGeneration/geminiService";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [loginTip, setLoginTip] = useState<string>("");
+  const [isLoadingTip, setIsLoadingTip] = useState(false);
+
+  useEffect(() => {
+    // Get a helpful login tip from Gemini
+    const getLoginTip = async () => {
+      setIsLoadingTip(true);
+      try {
+        const tip = await generateWithGemini(
+          "Give a very short, one-sentence friendly tip about secure login practices. Keep it casual and encouraging, max 100 characters."
+        );
+        setLoginTip(tip);
+      } catch (error) {
+        console.error("Error getting login tip:", error);
+      } finally {
+        setIsLoadingTip(false);
+      }
+    };
+    getLoginTip();
+  }, []);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -81,7 +103,14 @@ const Login = () => {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-md mx-auto">
+        <div className="max-w-md mx-auto space-y-4">
+          {loginTip && (
+            <Alert>
+              <AlertDescription>
+                {isLoadingTip ? "Getting a helpful tip..." : loginTip}
+              </AlertDescription>
+            </Alert>
+          )}
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl text-center">Welcome</CardTitle>
