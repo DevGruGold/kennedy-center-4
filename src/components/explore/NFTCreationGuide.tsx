@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Music, Image, Video, Bot, Certificate, ArrowRight } from "lucide-react";
+import { Music, Image, Video, Bot, Award, ArrowRight } from "lucide-react";
 
 export const NFTCreationGuide = () => {
   const artTypes = [
@@ -47,7 +47,7 @@ export const NFTCreationGuide = () => {
       <Card className="bg-primary/5 border-none">
         <CardContent className="p-8">
           <div className="flex items-center justify-center mb-6">
-            <Certificate className="w-16 h-16 text-primary" />
+            <Award className="w-16 h-16 text-primary" />
           </div>
           <h3 className="text-2xl font-bold text-center mb-4">
             Your NFT: A Digital Certificate of Authenticity
