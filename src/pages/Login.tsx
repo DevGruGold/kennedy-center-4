@@ -26,12 +26,20 @@ const Login = () => {
           description: "You have been signed out successfully.",
         });
       }
-      // Handle redirect errors
+      // Handle email verification errors
       if (event === 'USER_UPDATED' && !session) {
         toast({
           variant: "destructive",
-          title: "Authentication Error",
-          description: "Please try signing in again.",
+          title: "Email Verification Required",
+          description: "Please check your email and verify your account.",
+        });
+      }
+      // Handle invalid credentials
+      if (event === 'INVALID_CREDENTIALS') {
+        toast({
+          variant: "destructive",
+          title: "Invalid Credentials",
+          description: "Please check your email and password and try again.",
         });
       }
     });
