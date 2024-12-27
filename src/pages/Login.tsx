@@ -7,7 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { generateWithGemini } from "@/utils/textGeneration/geminiService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AuthError, AuthChangeEvent } from "@supabase/supabase-js";
+import { AuthError } from "@supabase/supabase-js";
+import type { AuthChangeEvent } from "@supabase/supabase-js";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const Login = () => {
         });
       }
       // Handle other auth events
-      if (event === AuthChangeEvent.USER_DELETED || event === AuthChangeEvent.TOKEN_REFRESHED) {
+      if (event === 'USER_DELETED' || event === 'TOKEN_REFRESHED') {
         console.log('Auth event occurred:', event);
       }
     });
