@@ -20,6 +20,7 @@ const Login = () => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth event:", event);
+      console.log("Session:", session);
       
       if (event === 'SIGNED_IN' && session) {
         toast({
@@ -34,24 +35,44 @@ const Login = () => {
           description: "You have been signed out successfully.",
         });
       }
+      // Add error handling for auth errors
+      if (event === 'USER_DELETED' || event === 'TOKEN_REFRESHED') {
+        console.log('Auth event occurred:', event);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
   const handleGoogleSignIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/`
-      }
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        }
+      });
 
-    if (error) {
+      if (error) {
+        console.error("Google sign in error:", error);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        });
+      } else {
+        console.log("Google sign in initiated:", data);
+      }
+    } catch (err) {
+      console.error("Unexpected error during sign in:", err);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message,
+        description: "An unexpected error occurred. Please try again.",
       });
     }
   };
