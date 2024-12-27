@@ -4,23 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { SubmissionSuccessDialog } from "@/components/SubmissionSuccessDialog";
 
 const Submit = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -52,18 +43,27 @@ const Submit = () => {
 
       setUploadedImageUrl(publicUrl);
 
-      // Check authentication status
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        // Show dialog for non-authenticated users
-        setShowAuthDialog(true);
-        return;
-      }
+      // Create artwork record
+      const { data: artwork, error: artworkError } = await supabase
+        .from('artworks')
+        .insert({
+          title: formData.title,
+          description: formData.description,
+          image_url: publicUrl,
+          creator_id: crypto.randomUUID(), // Generate a random ID for anonymous submissions
+        })
+        .select()
+        .single();
 
-      // If authenticated, proceed with artwork creation
-      await createArtwork(publicUrl, session.user.id);
+      if (artworkError) throw artworkError;
 
+      // Show success dialog
+      setShowSuccessDialog(true);
+
+      toast({
+        title: "Success!",
+        description: "Your artwork has been submitted successfully.",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -72,34 +72,6 @@ const Submit = () => {
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const createArtwork = async (imageUrl: string, userId: string) => {
-    try {
-      const { error: insertError } = await supabase
-        .from('artworks')
-        .insert({
-          title: formData.title,
-          description: formData.description,
-          image_url: imageUrl,
-          creator_id: userId,
-        });
-
-      if (insertError) throw insertError;
-
-      toast({
-        title: "Success!",
-        description: "Your artwork has been submitted successfully.",
-      });
-      
-      navigate("/profile");
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "There was a problem creating your artwork.",
-        variant: "destructive",
-      });
     }
   };
 
@@ -186,25 +158,12 @@ const Submit = () => {
         </div>
       </main>
 
-      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Your artwork is ready!</DialogTitle>
-            <DialogDescription>
-              Your artwork has been uploaded successfully. To mint it as an NFT and manage it in your collection, 
-              you'll need to create an account. Alternatively, you can download your artwork directly.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="flex flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={handleDownload}>
-              Download Artwork
-            </Button>
-            <Button onClick={() => navigate("/login")}>
-              Create Account
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <SubmissionSuccessDialog
+        open={showSuccessDialog}
+        onOpenChange={setShowSuccessDialog}
+        imageUrl={uploadedImageUrl}
+        onDownload={handleDownload}
+      />
     </div>
   );
 };
