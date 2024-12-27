@@ -3,14 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SubmissionSuccessDialog } from "@/components/SubmissionSuccessDialog";
-import { useNavigate } from "react-router-dom";
 
 const Submit = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -20,32 +18,11 @@ const Submit = () => {
     image: null as File | null,
   });
 
-  // Check authentication status
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        toast({
-          title: "Authentication required",
-          description: "Please log in to submit artwork",
-          variant: "destructive",
-        });
-        navigate("/login");
-      }
-    });
-  }, [navigate, toast]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // Get current user session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-      
-      if (sessionError || !session) {
-        throw new Error("Please log in to submit artwork");
-      }
-
       if (!formData.image) {
         throw new Error("Please select an image");
       }
@@ -66,26 +43,32 @@ const Submit = () => {
 
       setUploadedImageUrl(publicUrl);
 
-      // Create artwork record with authenticated user's ID
+      // Create artwork record anonymously
       const { data: artwork, error: artworkError } = await supabase
         .from('artworks')
         .insert({
           title: formData.title,
           description: formData.description,
           image_url: publicUrl,
-          creator_id: session.user.id, // Use authenticated user's ID
         })
         .select()
         .single();
 
       if (artworkError) throw artworkError;
 
+      // Mint token for the artwork
+      const { data: token, error: tokenError } = await supabase.functions.invoke('mint-token', {
+        body: { artworkId: artwork.id }
+      });
+
+      if (tokenError) throw tokenError;
+
       // Show success dialog
       setShowSuccessDialog(true);
 
       toast({
         title: "Success!",
-        description: "Your artwork has been submitted successfully.",
+        description: "Your artwork has been submitted anonymously. Keep your smart contract receipt safe to prove ownership later!",
       });
     } catch (error: any) {
       toast({
@@ -114,7 +97,7 @@ const Submit = () => {
         
         toast({
           title: "Download started",
-          description: "Your artwork is being downloaded.",
+          description: "Save your artwork and smart contract receipt to prove your ownership later!",
         });
       } catch (error) {
         toast({
@@ -132,9 +115,12 @@ const Submit = () => {
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary mb-8 text-center">
+          <h1 className="font-heading text-4xl md:text-5xl font-bold text-primary mb-4 text-center">
             Submit Your Artwork
           </h1>
+          <p className="text-center text-gray-600 mb-8">
+            Submit your artwork anonymously. You'll receive a smart contract receipt that you can use later to verify your ownership.
+          </p>
           
           <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-sm">
             <div>
@@ -175,7 +161,7 @@ const Submit = () => {
             </div>
             
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Submitting..." : "Submit Artwork"}
+              {isLoading ? "Submitting..." : "Submit Artwork Anonymously"}
             </Button>
           </form>
         </div>
