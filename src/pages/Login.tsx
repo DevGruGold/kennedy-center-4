@@ -12,7 +12,16 @@ const Login = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check if user is already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/");
+      }
+    });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth event:", event); // Add this for debugging
+      
       if (event === 'SIGNED_IN' && session) {
         toast({
           title: "Welcome back!",
@@ -26,12 +35,18 @@ const Login = () => {
           description: "You have been signed out successfully.",
         });
       }
-      // Handle email verification errors
       if (event === 'USER_UPDATED' && !session) {
         toast({
           variant: "destructive",
           title: "Email Verification Required",
           description: "Please check your email and verify your account.",
+        });
+      }
+      // Handle password reset
+      if (event === 'PASSWORD_RECOVERY') {
+        toast({
+          title: "Password Reset",
+          description: "Check your email for the password reset link.",
         });
       }
       // Handle invalid credentials
@@ -72,7 +87,15 @@ const Login = () => {
                 }}
                 theme="light"
                 providers={[]}
-                redirectTo={`${window.location.origin}/login`}
+                redirectTo={window.location.origin}
+                onError={(error) => {
+                  console.error("Auth error:", error); // Add this for debugging
+                  toast({
+                    variant: "destructive",
+                    title: "Authentication Error",
+                    description: error.message,
+                  });
+                }}
                 localization={{
                   variables: {
                     sign_in: {
