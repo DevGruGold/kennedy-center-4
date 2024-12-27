@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { generateWithGemini } from "@/utils/textGeneration/geminiService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { AuthError, AuthChangeEvent } from "@supabase/supabase-js";
+import type { AuthError } from "@supabase/supabase-js";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Login = () => {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth event:", event);
       console.log("Session:", session);
       
