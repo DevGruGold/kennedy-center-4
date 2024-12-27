@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { generateWithGemini } from "@/utils/textGeneration/geminiService";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AuthChangeEvent } from "@supabase/supabase-js";
+import { AuthError } from "@supabase/supabase-js";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Login = () => {
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Auth event:", event);
       console.log("Session:", session);
       
@@ -58,7 +58,7 @@ const Login = () => {
           description: "You have been signed out successfully.",
         });
       }
-      // Add error handling for auth events using proper type checking
+      // Handle other auth events
       if (event === 'USER_DELETED' || event === 'TOKEN_REFRESHED') {
         console.log('Auth event occurred:', event);
       }
