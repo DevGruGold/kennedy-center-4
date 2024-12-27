@@ -63,6 +63,12 @@ const Login = () => {
               <CardTitle className="text-2xl text-center">Welcome</CardTitle>
             </CardHeader>
             <CardContent>
+              <div className="mb-4 p-4 bg-blue-50 rounded-lg text-sm text-blue-800">
+                <p className="font-semibold mb-2">Test Mode Enabled</p>
+                <p>Email verification is disabled for testing.</p>
+                <p>1. Click "Sign Up" to create a new account</p>
+                <p>2. Or use any valid email format and password (min 6 chars)</p>
+              </div>
               <Auth
                 supabaseClient={supabase}
                 appearance={{
