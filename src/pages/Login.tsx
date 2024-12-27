@@ -42,19 +42,10 @@ const Login = () => {
           description: "Please check your email and verify your account.",
         });
       }
-      // Handle password reset
       if (event === 'PASSWORD_RECOVERY') {
         toast({
           title: "Password Reset",
           description: "Check your email for the password reset link.",
-        });
-      }
-      // Handle invalid credentials
-      if (event === 'INVALID_CREDENTIALS') {
-        toast({
-          variant: "destructive",
-          title: "Invalid Credentials",
-          description: "Please check your email and password and try again.",
         });
       }
     });
@@ -88,14 +79,6 @@ const Login = () => {
                 theme="light"
                 providers={[]}
                 redirectTo={window.location.origin}
-                onError={(error) => {
-                  console.error("Auth error:", error); // Add this for debugging
-                  toast({
-                    variant: "destructive",
-                    title: "Authentication Error",
-                    description: error.message,
-                  });
-                }}
                 localization={{
                   variables: {
                     sign_in: {
