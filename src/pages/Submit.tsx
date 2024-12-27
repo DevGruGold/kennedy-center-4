@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SubmissionSuccessDialog } from "@/components/SubmissionSuccessDialog";
+import { useNavigate } from "react-router-dom";
 
 const Submit = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
@@ -18,11 +20,32 @@ const Submit = () => {
     image: null as File | null,
   });
 
+  // Check authentication status
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to submit artwork",
+          variant: "destructive",
+        });
+        navigate("/login");
+      }
+    });
+  }, [navigate, toast]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      // Get current user session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !session) {
+        throw new Error("Please log in to submit artwork");
+      }
+
       if (!formData.image) {
         throw new Error("Please select an image");
       }
@@ -43,14 +66,14 @@ const Submit = () => {
 
       setUploadedImageUrl(publicUrl);
 
-      // Create artwork record
+      // Create artwork record with authenticated user's ID
       const { data: artwork, error: artworkError } = await supabase
         .from('artworks')
         .insert({
           title: formData.title,
           description: formData.description,
           image_url: publicUrl,
-          creator_id: crypto.randomUUID(), // Generate a random ID for anonymous submissions
+          creator_id: session.user.id, // Use authenticated user's ID
         })
         .select()
         .single();
