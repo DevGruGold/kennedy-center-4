@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { RickRollNFTCase } from "@/components/explore/RickRollNFTCase";
+import { NFTCreationGuide } from "@/components/explore/NFTCreationGuide";
 
 const Explore = () => {
   const { toast } = useToast();
@@ -145,6 +146,8 @@ const Explore = () => {
         </section>
 
         <RickRollNFTCase />
+        
+        <NFTCreationGuide />
 
         <section className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-12">Platform Features</h2>
