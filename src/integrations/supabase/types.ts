@@ -17,7 +17,6 @@ export type Database = {
           id: string
           image_url: string
           title: string
-          token_id: string | null
           updated_at: string
         }
         Insert: {
@@ -27,7 +26,6 @@ export type Database = {
           id?: string
           image_url: string
           title: string
-          token_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -37,90 +35,6 @@ export type Database = {
           id?: string
           image_url?: string
           title?: string
-          token_id?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      bookings: {
-        Row: {
-          car_id: string
-          created_at: string
-          end_date: string
-          id: string
-          renter_id: string
-          start_date: string
-          status: string
-          total_price: number
-          updated_at: string
-        }
-        Insert: {
-          car_id: string
-          created_at?: string
-          end_date: string
-          id?: string
-          renter_id: string
-          start_date: string
-          status?: string
-          total_price: number
-          updated_at?: string
-        }
-        Update: {
-          car_id?: string
-          created_at?: string
-          end_date?: string
-          id?: string
-          renter_id?: string
-          start_date?: string
-          status?: string
-          total_price?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_car_id_fkey"
-            columns: ["car_id"]
-            isOneToOne: false
-            referencedRelation: "cars"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      cars: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          image_url: string | null
-          location: string
-          name: string
-          owner_id: string
-          price_per_day: number
-          rating: number | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          location: string
-          name: string
-          owner_id: string
-          price_per_day: number
-          rating?: number | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          image_url?: string | null
-          location?: string
-          name?: string
-          owner_id?: string
-          price_per_day?: number
-          rating?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -131,136 +45,254 @@ export type Database = {
           created_at: string
           id: string
           role: string
-          user_id: string | null
         }
         Insert: {
           content: string
           created_at?: string
           id?: string
           role: string
-          user_id?: string | null
         }
         Update: {
           content?: string
           created_at?: string
           id?: string
           role?: string
-          user_id?: string | null
         }
         Relationships: []
       }
-      fleet_insights: {
+      customers: {
         Row: {
-          confidence_score: number | null
+          company: string | null
           created_at: string
+          email: string
           id: string
-          location: string
-          predicted_demand: number | null
-          prediction_time: string | null
-          prediction_type: string
-        }
-        Insert: {
-          confidence_score?: number | null
-          created_at?: string
-          id?: string
-          location: string
-          predicted_demand?: number | null
-          prediction_time?: string | null
-          prediction_type: string
-        }
-        Update: {
-          confidence_score?: number | null
-          created_at?: string
-          id?: string
-          location?: string
-          predicted_demand?: number | null
-          prediction_time?: string | null
-          prediction_type?: string
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          created_at: string
-          display_name: string | null
-          id: string
+          last_contacted: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          status: string | null
           updated_at: string
         }
         Insert: {
+          company?: string | null
           created_at?: string
-          display_name?: string | null
-          id: string
+          email: string
+          id?: string
+          last_contacted?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          status?: string | null
           updated_at?: string
         }
         Update: {
+          company?: string | null
           created_at?: string
-          display_name?: string | null
+          email?: string
           id?: string
+          last_contacted?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          status?: string | null
           updated_at?: string
         }
         Relationships: []
       }
-      reviews: {
+      debate_responses: {
         Row: {
-          booking_id: string
-          comment: string | null
+          ai_name: string
           created_at: string
           id: string
-          rating: number
-          reviewer_id: string
+          response: string
+          topic: string
         }
         Insert: {
-          booking_id: string
-          comment?: string | null
+          ai_name: string
           created_at?: string
           id?: string
-          rating: number
-          reviewer_id: string
+          response: string
+          topic: string
         }
         Update: {
-          booking_id?: string
-          comment?: string | null
+          ai_name?: string
           created_at?: string
           id?: string
-          rating?: number
-          reviewer_id?: string
+          response?: string
+          topic?: string
+        }
+        Relationships: []
+      }
+      documents: {
+        Row: {
+          content: string
+          created_at: string
+          customer_id: string
+          id: string
+          metadata: Json | null
+          signed_at: string | null
+          status: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          metadata?: Json | null
+          signed_at?: string | null
+          status?: string | null
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          metadata?: Json | null
+          signed_at?: string | null
+          status?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "reviews_booking_id_fkey"
-            columns: ["booking_id"]
+            foreignKeyName: "documents_customer_id_fkey"
+            columns: ["customer_id"]
             isOneToOne: false
-            referencedRelation: "bookings"
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]
       }
-      rewards: {
+      emails: {
         Row: {
-          category: string
+          content: string
           created_at: string
-          description: string | null
+          customer_id: string
           id: string
-          name: string
-          points: number | null
+          scheduled_for: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string
         }
         Insert: {
-          category: string
+          content: string
           created_at?: string
-          description?: string | null
+          customer_id: string
           id?: string
-          name: string
-          points?: number | null
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
         }
         Update: {
-          category?: string
+          content?: string
           created_at?: string
-          description?: string | null
+          customer_id?: string
           id?: string
+          scheduled_for?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emails_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      historical_figures: {
+        Row: {
+          created_at: string
+          description: string
+          era: string
+          id: string
+          image_url: string
+          name: string
+          nationality: string
+          prompt: string
+          role: string
+          updated_at: string
+          voice_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          era: string
+          id?: string
+          image_url: string
+          name: string
+          nationality: string
+          prompt: string
+          role: string
+          updated_at?: string
+          voice_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          era?: string
+          id?: string
+          image_url?: string
           name?: string
-          points?: number | null
+          nationality?: string
+          prompt?: string
+          role?: string
+          updated_at?: string
+          voice_id?: string
         }
         Relationships: []
+      }
+      interactions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          customer_id: string
+          details: string | null
+          id: string
+          scheduled_at: string | null
+          summary: string
+          type: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          customer_id: string
+          details?: string | null
+          id?: string
+          scheduled_at?: string | null
+          summary: string
+          type: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          customer_id?: string
+          details?: string | null
+          id?: string
+          scheduled_at?: string | null
+          summary?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interactions_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       secrets: {
         Row: {
@@ -286,36 +318,39 @@ export type Database = {
       tokens: {
         Row: {
           artwork_id: string
-          blockchain_status: string | null
-          contract_address: string | null
+          blockchain_status: string
+          contract_address: string
           created_at: string
           id: string
-          owner_id: string
+          owner_id: string | null
           token_metadata: Json | null
           token_uri: string
           transaction_hash: string | null
+          updated_at: string
         }
         Insert: {
           artwork_id: string
-          blockchain_status?: string | null
-          contract_address?: string | null
+          blockchain_status?: string
+          contract_address: string
           created_at?: string
           id?: string
-          owner_id: string
+          owner_id?: string | null
           token_metadata?: Json | null
           token_uri: string
           transaction_hash?: string | null
+          updated_at?: string
         }
         Update: {
           artwork_id?: string
-          blockchain_status?: string | null
-          contract_address?: string | null
+          blockchain_status?: string
+          contract_address?: string
           created_at?: string
           id?: string
-          owner_id?: string
+          owner_id?: string | null
           token_metadata?: Json | null
           token_uri?: string
           transaction_hash?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -327,88 +362,42 @@ export type Database = {
           },
         ]
       }
-      user_rewards: {
+      user_roles: {
         Row: {
-          earned_at: string
-          id: string
-          points_earned: number | null
-          reward_id: string | null
-          user_id: string
-        }
-        Insert: {
-          earned_at?: string
-          id?: string
-          points_earned?: number | null
-          reward_id?: string | null
-          user_id: string
-        }
-        Update: {
-          earned_at?: string
-          id?: string
-          points_earned?: number | null
-          reward_id?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_rewards_reward_id_fkey"
-            columns: ["reward_id"]
-            isOneToOne: false
-            referencedRelation: "rewards"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      vehicle_telemetry: {
-        Row: {
-          battery_level: number | null
-          car_id: string | null
           created_at: string
           id: string
-          last_maintenance: string | null
-          location: string
-          mileage: number | null
-          status: string | null
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Insert: {
-          battery_level?: number | null
-          car_id?: string | null
           created_at?: string
           id?: string
-          last_maintenance?: string | null
-          location: string
-          mileage?: number | null
-          status?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
         }
         Update: {
-          battery_level?: number | null
-          car_id?: string | null
           created_at?: string
           id?: string
-          last_maintenance?: string | null
-          location?: string
-          mileage?: number | null
-          status?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vehicle_telemetry_car_id_fkey"
-            columns: ["car_id"]
-            isOneToOne: false
-            referencedRelation: "cars"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
