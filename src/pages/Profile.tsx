@@ -1,3 +1,4 @@
+
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -13,6 +14,7 @@ interface Artwork {
   image_url: string;
   created_at: string;
   token_id: string | null;
+  tokens?: { id: string; blockchain_status: string }[];
 }
 
 const Profile = () => {
@@ -48,7 +50,18 @@ const Profile = () => {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setArtworks(data);
+      // Transform the data to match our Artwork interface
+      const transformedData: Artwork[] = data.map(item => ({
+        id: item.id,
+        title: item.title,
+        description: item.description,
+        image_url: item.image_url,
+        created_at: item.created_at,
+        token_id: item.tokens && item.tokens.length > 0 ? item.tokens[0].id : null,
+        tokens: item.tokens
+      }));
+      
+      setArtworks(transformedData);
     }
   };
 
