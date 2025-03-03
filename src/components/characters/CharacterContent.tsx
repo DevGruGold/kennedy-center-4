@@ -1,3 +1,4 @@
+
 import { Character } from "@/types/historical";
 import { TabsContent } from "@/components/ui/tabs";
 import { CharacterProfile } from "./CharacterProfile";
@@ -9,6 +10,11 @@ import { LincolnChat } from "../chat/lincoln/LincolnChat";
 import { WashingtonChat } from "../chat/washington/WashingtonChat";
 import { MLKChat } from "../chat/mlk/MLKChat";
 import { DouglassChat } from "../chat/douglass/DouglassChat";
+import { JeffersonChat } from "../chat/jefferson/JeffersonChat";
+import { FranklinChat } from "../chat/franklin/FranklinChat";
+import { HamiltonChat } from "../chat/hamilton/HamiltonChat";
+import { AnthonyChat } from "../chat/anthony/AnthonyChat";
+import { RooseveltChat } from "../chat/roosevelt/RooseveltChat";
 
 interface CharacterContentProps {
   character: Character;
@@ -42,6 +48,16 @@ export const CharacterContent = ({
         return <MLKChat voiceId={character.voiceId} />;
       case 'frederickdouglass':
         return <DouglassChat voiceId={character.voiceId} />;
+      case 'thomasjefferson':
+        return <JeffersonChat voiceId={character.voiceId} />;
+      case 'benjaminfranklin':
+        return <FranklinChat voiceId={character.voiceId} />;
+      case 'alexanderhamilton':
+        return <HamiltonChat voiceId={character.voiceId} />;
+      case 'susanb.anthony':
+        return <AnthonyChat voiceId={character.voiceId} />;
+      case 'theodoreroosevelt':
+        return <RooseveltChat voiceId={character.voiceId} />;
       default:
         return null;
     }

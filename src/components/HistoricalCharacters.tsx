@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Character } from "@/types/historical";
@@ -13,6 +14,46 @@ const characters: Character[] = [
     description: "Experience an AI simulation of President Kennedy discussing his vision for the arts and the Kennedy Center.",
     voiceId: "iP95p4xoKVk53GoZ742B",
     prompt: "Share your vision for the arts in America and the importance of the Kennedy Center as a national cultural institution. Emphasize your belief in the power of arts to inspire and unite the nation. Keep your response natural and conversational, focusing on your passion for cultural advancement and the legacy you hope to leave through the Kennedy Center."
+  },
+  {
+    name: "Thomas Jefferson",
+    role: "3rd U.S. President & Declaration Author",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Thomas_Jefferson_by_Rembrandt_Peale%2C_1800.jpg/800px-Thomas_Jefferson_by_Rembrandt_Peale%2C_1800.jpg",
+    description: "Engage with the author of the Declaration of Independence on liberty, democracy, and cultural progress.",
+    voiceId: "TX3LPaxmHKxFdv7VOQHJ",
+    prompt: "Share your perspective on how cultural institutions like the Kennedy Center embody the democratic principles you championed. Discuss your vision of freedom, education, and artistic expression as foundational to a thriving republic. Emphasize your love of liberty and the importance of preserving artistic and intellectual freedom for future generations."
+  },
+  {
+    name: "Benjamin Franklin",
+    role: "Founding Father & Polymath",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Franklin-Benjamin-LOC.jpg/800px-Franklin-Benjamin-LOC.jpg",
+    description: "Converse with this founding father, inventor, and diplomat on innovation, democracy, and cultural advancement.",
+    voiceId: "XB0fDUnXU5powFXDhCwa",
+    prompt: "Share your perspective on how cultural institutions like the Kennedy Center reflect your vision of a society that values education, innovation, and the arts. Discuss how your passion for science, diplomacy, and civic improvement aligns with modern cultural institutions, drawing from your experience as an inventor, statesman, and advocate for public education."
+  },
+  {
+    name: "Alexander Hamilton",
+    role: "Founding Father & First Treasury Secretary",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Alexander_Hamilton_portrait_by_John_Trumbull_1806.jpg/800px-Alexander_Hamilton_portrait_by_John_Trumbull_1806.jpg",
+    description: "Discuss financial systems, federalism, and the importance of strong institutions with the architect of America's economic foundation.",
+    voiceId: "nPczCjzI2devNBz1zQrb",
+    prompt: "Share your perspective on how institutions like the Kennedy Center contribute to national unity and prosperity. Discuss your vision of a strong federal system supporting cultural advancement and how public arts funding aligns with your views on national development and identity. Keep your responses passionate and forward-thinking, drawing from your experience creating America's financial foundation."
+  },
+  {
+    name: "Susan B. Anthony",
+    role: "Women's Rights Activist",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Susan_B._Anthony_c1855.jpg/800px-Susan_B._Anthony_c1855.jpg",
+    description: "Engage with this pioneering suffragist on equality, representation, and expanding liberty to all Americans.",
+    voiceId: "EXAVITQu4vr4xnSDxMaL",
+    prompt: "Share your perspective on how cultural institutions like the Kennedy Center can advance equality and representation. Discuss your vision of a society where all citizens have equal rights and opportunities, including access to arts and culture. Draw from your experience fighting for women's suffrage to highlight the ongoing journey toward full participation and representation in American civic and cultural life."
+  },
+  {
+    name: "Theodore Roosevelt",
+    role: "26th U.S. President",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/President_Roosevelt_-_Pach_Bros_%28cropped%29.jpg/800px-President_Roosevelt_-_Pach_Bros_%28cropped%29.jpg",
+    description: "Discuss conservation, progressive reforms, and American culture with the energetic Rough Rider president.",
+    voiceId: "onwK4e9ZLuTAKqWW03F9",
+    prompt: "Share your perspective on how institutions like the Kennedy Center embody your vision of a vibrant American culture and national spirit. Discuss the importance of both preserving tradition and embracing innovation in the arts, drawing parallels to your conservation efforts and progressive reforms. Keep your responses energetic and bold, emphasizing how cultural institutions contribute to national character and civic pride."
   },
   {
     name: "Martin Luther King Jr.",
